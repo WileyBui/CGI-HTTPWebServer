@@ -1,4 +1,3 @@
-// Server side C program to demonstrate Socket programming
 #include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,9 +10,9 @@
 
 int main(int argc, char const *argv[])
 {
-  int s, new_socket, client_header_value; // socket descriptor
   char buffer[1024] = {0};
-  struct sockaddr_in address; // an Internet endpoint address
+  struct sockaddr_in address;             // an Internet endpoint address
+  int s, new_socket, client_header_value; // socket descriptor, s
   socklen_t sock_size = sizeof(struct sockaddr_in);
 
   address.sin_family      = AF_INET;
