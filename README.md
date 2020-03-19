@@ -1,4 +1,4 @@
-# INET4021Labs
+# INET4021Lab
 
 
 ### Set-up
