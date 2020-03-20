@@ -5,11 +5,71 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
+// will be imported from httpd.conf file in main()
+char root_directory[50];
+char index_filename[50];
+
+int sock_from_client(int soc_file_descriptor)
+{
+  char *data_to_client;
+  char *method_type, *filename;
+  char buffer[1024] = {0};
+  read(soc_file_descriptor, buffer, 1024);
+
+  char *get_first_line      = strtok(buffer, "\n");
+  char *get_words_from_line = strtok(get_first_line, " ");
+
+  // going through a list of words on the very first line
+  for (int i = 0; i < 2; i++) {
+    if (i == 0) {
+      // retrieve the header's method: GET, POST, ...
+      // ex) GET ----------------> GET /favicon.ico HTTP/1.1
+      method_type = get_words_from_line;
+    }
+    else {
+      // retrieve the header's filename: index.htm, home.htm, ...
+      // ex) /favicon.ico in ----> GET /favicon.ico HTTP/1.1
+      filename = get_words_from_line;
+    }
+    get_words_from_line = strtok(NULL, " "); // sets pointer to next word
+  }
+
+  printf("Searching for \"%s\" file: ", filename);
+  strcat(root_directory, filename);
+  if (access(root_directory, F_OK) < 0) {
+    printf("does NOT exist.\n");
+
+    data_to_client = "HTTP/1.1 200 OK\r\n"
+                     "Content-Type: text/plain\n"
+                     "Connection: close\n\n"
+                     "The file you requested does not exist. :(";
+  }
+  else {
+    printf("does exist.\n");
+    data_to_client = "HTTP/1.1 200 OK\r\n"
+                     "Content-Type: text/plain\n"
+                     "Connection: close\n\n"
+                     "The file you requested does exist! :)";
+  }
+
+  send(soc_file_descriptor, data_to_client, strlen(data_to_client), 0);
+
+  if (strcmp(method_type, "GET") == 0) {
+    printf("Received GET method\n");
+  }
+  else if (strcmp(method_type, "POST") == 0) {
+    printf("Received POST method\n");
+  }
+  else {
+    printf("Received some other methods: %s\n", method_type);
+  }
+
+  return 0;
+}
+
 int main(int argc, char const *argv[])
 {
   // will be imported from httpd.conf file
-  char root_directory[50];
-  char index_filename[50];
   int simultaneous_connections, port;
 
   printf("\nImporting settings from /conf/httpd.conf...\n");
@@ -41,8 +101,7 @@ int main(int argc, char const *argv[])
   printf("  Index filename (if none given): %s\n", index_filename);
   printf("  Port to run on server: %i\n\n", port);
 
-  char buffer[1024] = {0};
-  int s, new_sock;            // socket descriptor, s
+  int s, new_sock;            // socket descriptor
   struct sockaddr_in address; // an Internet endpoint address
   socklen_t sock_size = sizeof(struct sockaddr_in);
 
@@ -87,16 +146,7 @@ int main(int argc, char const *argv[])
       if (pid == 0) { // child
         close(s);     // I am now the client - close the listener: client doesnt
                       // need it
-        read(new_sock, buffer, 1024);
-        printf("Received from the client:\n%s\n", buffer);
-        char *hello = "HTTP/1.1 200 OK\r\n"
-                      "Content-Type: text/plain\n"
-                      "Content-length: 5\n"
-                      "Connection: close\n\n"
-                      "Hello\n";
-        send(new_sock, hello, strlen(hello), 0);
-        printf("Server sent: %s", hello);
-
+        sock_from_client(new_sock);
         exit(0);
       }
       else if (pid > 0) { // parent
