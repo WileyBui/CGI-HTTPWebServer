@@ -12,29 +12,38 @@ int main(int argc, char const *argv[])
   char index_filename[50];
   int simultaneous_connections, port;
 
+  printf("\nImporting settings from /conf/httpd.conf...\n");
   FILE *ptr = fopen("../conf/httpd.conf", "r");
   if (ptr == NULL) {
     printf("Error opening up configuration file.\n");
     exit(EXIT_FAILURE);
   }
 
-  fscanf(ptr, "%i", &simultaneous_connections);
-  fscanf(ptr, "%s", root_directory);
-  fscanf(ptr, "%s", index_filename);
-  fscanf(ptr, "%i", &port);
+  // read information from httpd.conf line by line
+  if ((fscanf(ptr, "%i", &simultaneous_connections) < 0) ||
+      (fscanf(ptr, "%s", root_directory) < 0) ||
+      (fscanf(ptr, "%s", index_filename) < 0) ||
+      (fscanf(ptr, "%i", &port) < 0)) {
+    printf(" Configuration failed - make sure you include:\n"
+           "   - number of simultaneous connections\n"
+           "   - root directory to start looking for HTML files\n"
+           "   - index filename, if none given\n"
+           "   - port number to run on the server\n");
+    fclose(ptr);
+    exit(EXIT_FAILURE);
+  }
   fclose(ptr); // closing the file
 
-  printf("Server settings from /conf/httpd.conf:\n");
   printf("  Number of simultaneous connections: %i\n",
          simultaneous_connections);
   printf("  Root directory (to start looking for HTML files): %s\n",
          root_directory);
   printf("  Index filename (if none given): %s\n", index_filename);
-  printf("  Port to run on server: %i\n", port);
+  printf("  Port to run on server: %i\n\n", port);
 
   char buffer[1024] = {0};
-  int s, new_sock, client_header_value; // socket descriptor, s
-  struct sockaddr_in address;           // an Internet endpoint address
+  int s, new_sock;            // socket descriptor, s
+  struct sockaddr_in address; // an Internet endpoint address
   socklen_t sock_size = sizeof(struct sockaddr_in);
 
   address.sin_family      = AF_INET;
@@ -69,12 +78,38 @@ int main(int argc, char const *argv[])
       exit(EXIT_FAILURE);
     }
     else {
-      client_header_value = read(new_sock, buffer, 1024);
-      printf("Received from the client: %s\n", buffer);
-      close(new_sock);
+      // "Fork() can be used at the place where there is division of work like a
+      // server has to handle multiple clients, So parent has to accept the
+      // connection on regular basis, So server does fork for each client to
+      // perform read-write.""
+      int pid = fork();
+
+      if (pid == 0) { // child
+        close(s);     // I am now the client - close the listener: client doesnt
+                      // need it
+        read(new_sock, buffer, 1024);
+        printf("Received from the client:\n%s\n", buffer);
+        char *hello = "HTTP/1.1 200 OK\r\n"
+                      "Content-Type: text/plain\n"
+                      "Content-length: 5\n"
+                      "Connection: close\n\n"
+                      "Hello\n";
+        send(new_sock, hello, strlen(hello), 0);
+        printf("Server sent: %s", hello);
+
+        exit(0);
+      }
+      else if (pid > 0) { // parent
+        close(new_sock);  // I am still the server - close the accepted handle:
+                          // server doesn't need it.
+      }
+      else {
+        printf("fork() failed.\n");
+        exit(EXIT_FAILURE);
+      }
     }
   }
-  close(s);
+  // close(s);
 
   return 0;
 }
