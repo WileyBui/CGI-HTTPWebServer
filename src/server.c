@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,6 +9,40 @@
 // will be imported from httpd.conf file in main()
 char root_directory[50];
 char index_filename[50];
+
+char *get_content_type(char *filename)
+{
+  char *file_path = strtok(filename, ".");
+  char *file_extension;
+  while (file_path != NULL) { // find the file extension
+    file_extension = file_path;
+    file_path      = strtok(NULL, " ");
+  }
+
+  // sets file extension to lowercase in order to compare strings
+  for (int i = 0; file_extension[i]; i++) {
+    file_extension[i] = tolower(file_extension[i]);
+  }
+
+  // comparing the strings to match with its corresponding type
+  if ((strcmp(file_extension, "jpeg") == 0) ||
+      (strcmp(file_extension, "jpg") == 0)) {
+    return "image/jpeg";
+  }
+  else if (strcmp(file_extension, "gif") == 0) {
+    return "image/gif";
+  }
+  else if ((strcmp(file_extension, "html") == 0) ||
+           (strcmp(file_extension, "htm") == 0)) {
+    return "text/html";
+  }
+  else {
+    printf(
+        "Can't determine content type; received %s as file extension instead.",
+        file_extension);
+    return "undetermined";
+  }
+}
 
 int sock_from_client(int soc_file_descriptor)
 {
@@ -57,16 +92,16 @@ int sock_from_client(int soc_file_descriptor)
     fread(string, 1, fsize, file);
     fclose(file);
 
-    char *send_to_client = "HTTP/1.1 200 OK\r\n"
-                     "Content-Type: image/gif\\nn";
-    // strcat(send_to_client, "<html><head><title>Testing 1
-    // 2 3...</title></head><body><p>it works!</p><h1>hello
-    // world!</h1><h1>hello world!</h1><h1>hello world!</h1><h1>hello
-    // world!</h1><h1>hello world!</h1></body></html>"); printf("DATA: %s;
-    // STRING: %s\n", send_to_client, string); strcat(send_to_client,
-    // string); 
-    strcat(send_to_client, string);
-    printf("SENDING DATA: %s\n", string);
+    char send_to_client[10000];
+    char *content_type = get_content_type(filename);
+    sprintf(send_to_client,
+            "HTTP/1.1 200 OK\r\n"
+            "Content-Type: %s\n"
+            "Connection: close\n\n"
+            "%s",
+            content_type, string);
+    printf("============\nTHE FOLLOW HAS SENT TO THE CLIENT:\n%s; %s\n============\n\n", send_to_client,
+           content_type);
     send(soc_file_descriptor, send_to_client, strlen(send_to_client), 0);
   }
 
