@@ -42,17 +42,33 @@ int sock_from_client(int soc_file_descriptor)
     data_to_client = "HTTP/1.1 200 OK\r\n"
                      "Content-Type: text/plain\n"
                      "Connection: close\n\n"
-                     "The file you requested does not exist. :(";
+                     "HTTP 404 - File not found";
+    send(soc_file_descriptor, data_to_client, strlen(data_to_client), 0);
   }
   else {
     printf("does exist.\n");
-    data_to_client = "HTTP/1.1 200 OK\r\n"
-                     "Content-Type: text/plain\n"
-                     "Connection: close\n\n"
-                     "The file you requested does exist! :)";
-  }
 
-  send(soc_file_descriptor, data_to_client, strlen(data_to_client), 0);
+    FILE *file = fopen(root_directory, "r");
+    fseek(file, 0, SEEK_END);
+    long fsize = ftell(file);
+    fseek(file, 0, SEEK_SET); /* same as rewind(file); */
+
+    char *string = malloc(fsize + 1);
+    fread(string, 1, fsize, file);
+    fclose(file);
+
+    char *send_to_client = "HTTP/1.1 200 OK\r\n"
+                     "Content-Type: image/gif\\nn";
+    // strcat(send_to_client, "<html><head><title>Testing 1
+    // 2 3...</title></head><body><p>it works!</p><h1>hello
+    // world!</h1><h1>hello world!</h1><h1>hello world!</h1><h1>hello
+    // world!</h1><h1>hello world!</h1></body></html>"); printf("DATA: %s;
+    // STRING: %s\n", send_to_client, string); strcat(send_to_client,
+    // string); 
+    strcat(send_to_client, string);
+    printf("SENDING DATA: %s\n", string);
+    send(soc_file_descriptor, send_to_client, strlen(send_to_client), 0);
+  }
 
   if (strcmp(method_type, "GET") == 0) {
     printf("Received GET method\n");
