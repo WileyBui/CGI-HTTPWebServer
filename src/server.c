@@ -85,65 +85,34 @@ int sock_from_client(int sock_file_descriptor)
   else {
     printf("exists.\n");
 
-    char header[] = "HTTP/1.1 200 OK\r\n"
-    "Content-Type: text/html\n\n";
+    if (strcmp(method_type, "GET") == 0) {
+      printf("Received GET method (%s)\n", filename);
+      // get header
+      char header[64];
+      char *content_type = get_content_type(filename);
+      strcpy(header, "HTTP/1.1 200 OK\r\n"
+                     "Content-Type: ");
+      strcat(header, content_type);
+      strcat(header, "\n\n");
 
-    // char header[] = "HTTP/1.1 200 OK\r\nContent-Type: text/html\n\n";
+      // get file's size
+      FILE *file = fopen(root_directory, "rb");
+      fseek(file, 0, SEEK_END);
+      long fsize = ftell(file);
+      fseek(file, 0, SEEK_SET); /* same as rewind(file); */
 
-    // strcat(header, "test :)");
+      write(sock_file_descriptor, header, strlen(header));
+      int fd = open(root_directory, O_RDONLY); // fd = file descriptor
+      sendfile(sock_file_descriptor, fd, NULL, fsize + strlen(header));
+      close(fd);
+    }
+    else if (strcmp(method_type, "POST") == 0) {
+      printf("Received POST method\n");
 
-    // char *header;
-
-    // char *content_type = get_content_type(filename);
-    // if (strcmp(content_type, "image/jpeg") == 0) {
-    //   header = "HTTP/1.1 200 OK\r\n"
-    //            "Content-Type: image/jpeg\n\n";
-    // }
-    // else if (strcmp(content_type, "image/gif") == 0) {
-    //   header = "HTTP/1.1 200 OK\r\n"
-    //            "Content-Type: image/gif\n\n";
-    // }
-    // else if (strcmp(content_type, "text/html") == 0) {
-    //   header = "HTTP/1.1 200 OK\r\n"
-    //            "Content-Type: text/html\n\n";
-    // }
-    // else {
-    //   header = "poop";
-    // }
-
-    // char header[] = "HTTP/1.1 200 OK\r\n"
-    //                 "Content-Type: text/html\n\n";
-
-    // char header[128];
-    // char content_type[64];
-    // strcpy(header, "HTTP/1.1 200 OK\r\n"
-    //                "Content-Type: ");
-    // strcpy(content_type, get_content_type(filename));
-    // strcat(header, content_type);
-
-    // printf("\n<========\nHEADER: %s; %li;=======>\n\n", header,
-    //        sizeof(header));
-
-    // get file's size
-    FILE *file = fopen(root_directory, "rb");
-    fseek(file, 0, SEEK_END);
-    long fsize = ftell(file);
-    fseek(file, 0, SEEK_SET); /* same as rewind(file); */
-
-    write(sock_file_descriptor, header, sizeof(header) - 1);
-    int fd = open(root_directory, O_RDONLY); // fd = file descriptor
-    sendfile(sock_file_descriptor, fd, NULL, fsize + sizeof(header) - 1);
-    close(fd);
-  }
-
-  if (strcmp(method_type, "GET") == 0) {
-    printf("Received GET method\n");
-  }
-  else if (strcmp(method_type, "POST") == 0) {
-    printf("Received POST method\n");
-  }
-  else {
-    printf("Received some other methods: %s\n", method_type);
+    }
+    else {
+      printf("Received some other methods: %s\n", method_type);
+    }
   }
 
   return 0;
