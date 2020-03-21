@@ -62,14 +62,12 @@ int sock_from_client(int sock_file_descriptor)
   char *get_words_from_line = strtok(get_first_line, " ");
 
   // get method type & file name from first line of buffer
+  // ex) "GET" type and "/index.htm" filename in GET /index.htm HTTP/1.1
   for (int i = 0; i < 2; i++) {
-    if (i == 0) { // retrieve the header's method: GET, POST, ...
-                  // ex) "GET" in -----> GET /index.htm HTTP/1.1
+    if (i == 0) {
       method_type = get_words_from_line;
     }
-    else { // retrieve the header's filename: index.htm, home.htm, ...
-           // ex) "/index.htm" in -----> GET /index.htm HTTP/1.1
-           // also redirect to index_filename if no filename is given
+    else { // redirect to index_filename if no filename is given
       filename = (strcmp(get_words_from_line, "/") == 0) ? index_filename
                                                          : get_words_from_line;
     }

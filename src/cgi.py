@@ -1,13 +1,36 @@
+#!C:\Python27\python.exe -u
+#!/usr/bin/env python
+
 import cgi
+import cgitb; cgitb.enable()  # for troubleshooting
 
-print("Content-type:text/html\r\n\r\n")
-print("<html>")
-print("<head><title>Testing 1 2 3...</title></head>")
-print("<body>")
-print("<p>it works!</p>")
+print("Content-type: text/html")
+print()
 
-for i in range(5):
-  print("<h1>hello world!</h1>")
+print("""
+<html>
 
-print("</body>")
-print("</html>")
+<head><title>Sample CGI Script</title></head>
+
+<body>
+
+  <h3> Sample CGI Script </h3>
+""")
+
+form = cgi.FieldStorage()
+message = form.getvalue("message", "(no message)")
+
+print("""
+
+  <p>Previous message: %s</p>
+
+  <p>form
+
+  <form method="post" action="index.cgi">
+    <p>message: <input type="text" name="message"/></p>
+  </form>
+
+</body>
+
+</html>
+""") % cgi.escape(message)
