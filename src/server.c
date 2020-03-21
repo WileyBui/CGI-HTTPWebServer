@@ -1,9 +1,13 @@
 #include <ctype.h>
+#include <fcntl.h>
 #include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/sendfile.h>
 #include <sys/socket.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <unistd.h>
 
 // will be imported from httpd.conf file in main()
@@ -27,14 +31,17 @@ char *get_content_type(char *filename)
   // comparing the strings to match with its corresponding type
   if ((strcmp(file_extension, "jpeg") == 0) ||
       (strcmp(file_extension, "jpg") == 0)) {
-    return "image/jpeg";
+    printf("GOT: image/jpeg");
+    return "image/jpeg\n\n";
   }
   else if (strcmp(file_extension, "gif") == 0) {
-    return "image/gif";
+    printf("GOT: image/gif");
+    return "image/gif\n\n";
   }
   else if ((strcmp(file_extension, "html") == 0) ||
            (strcmp(file_extension, "htm") == 0)) {
-    return "text/html";
+    printf("GOT: text/html");
+    return "text/html\n\n";
   }
   else {
     printf(
@@ -44,12 +51,12 @@ char *get_content_type(char *filename)
   }
 }
 
-int sock_from_client(int soc_file_descriptor)
+int sock_from_client(int sock_file_descriptor)
 {
   char *data_to_client;
   char *method_type, *filename;
   char buffer[1024] = {0};
-  read(soc_file_descriptor, buffer, 1024);
+  read(sock_file_descriptor, buffer, 1024);
 
   char *get_first_line      = strtok(buffer, "\n");
   char *get_words_from_line = strtok(get_first_line, " ");
@@ -78,31 +85,31 @@ int sock_from_client(int soc_file_descriptor)
                      "Content-Type: text/plain\n"
                      "Connection: close\n\n"
                      "HTTP 404 - File not found";
-    send(soc_file_descriptor, data_to_client, strlen(data_to_client), 0);
+    send(sock_file_descriptor, data_to_client, strlen(data_to_client), 0);
   }
   else {
     printf("does exist.\n");
 
-    FILE *file = fopen(root_directory, "r");
+    char header[] = "HTTP/1.1 200 OK\r\n"
+                    "Content-Type: text/html\n\n";
+
+    // char header[128];
+    // char content_type[64];
+    // strcpy(header, "HTTP/1.1 200 OK\r\n"
+    //                "Content-Type: ");
+    // strcpy(content_type, get_content_type(filename));
+    // strcat(header, content_type);
+
+    // get file's size
+    FILE *file = fopen(root_directory, "rb");
     fseek(file, 0, SEEK_END);
     long fsize = ftell(file);
     fseek(file, 0, SEEK_SET); /* same as rewind(file); */
 
-    char *string = malloc(fsize + 1);
-    fread(string, 1, fsize, file);
-    fclose(file);
-
-    char send_to_client[10000];
-    char *content_type = get_content_type(filename);
-    sprintf(send_to_client,
-            "HTTP/1.1 200 OK\r\n"
-            "Content-Type: %s\n"
-            "Connection: close\n\n"
-            "%s",
-            content_type, string);
-    printf("============\nTHE FOLLOW HAS SENT TO THE CLIENT:\n%s; %s\n============\n\n", send_to_client,
-           content_type);
-    send(soc_file_descriptor, send_to_client, strlen(send_to_client), 0);
+    write(sock_file_descriptor, header, sizeof(header) - 1);
+    int fd = open(root_directory, O_RDONLY); // fd = file descriptor
+    sendfile(sock_file_descriptor, fd, NULL, fsize + sizeof(header));
+    close(fd);
   }
 
   if (strcmp(method_type, "GET") == 0) {
