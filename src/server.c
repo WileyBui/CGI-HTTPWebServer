@@ -31,16 +31,13 @@ char *get_content_type(char *filename)
   // comparing the strings to match with its corresponding type
   if ((strcmp(file_extension, "jpeg") == 0) ||
       (strcmp(file_extension, "jpg") == 0)) {
-    printf("GOT: image/jpeg");
     return "image/jpeg\n\n";
   }
   else if (strcmp(file_extension, "gif") == 0) {
-    printf("GOT: image/gif");
     return "image/gif\n\n";
   }
   else if ((strcmp(file_extension, "html") == 0) ||
            (strcmp(file_extension, "htm") == 0)) {
-    printf("GOT: text/html");
     return "text/html\n\n";
   }
   else {
@@ -88,15 +85,17 @@ int sock_from_client(int sock_file_descriptor)
   else {
     printf("exists.\n");
 
-    char header[] = "HTTP/1.1 200 OK\r\n"
-                    "Content-Type: text/html\n\n";
+    // char header[] = "HTTP/1.1 200 OK\r\n"
+                    // "Content-Type: text/html\n\n";
 
-    // char header[128];
-    // char content_type[64];
-    // strcpy(header, "HTTP/1.1 200 OK\r\n"
-    //                "Content-Type: ");
-    // strcpy(content_type, get_content_type(filename));
-    // strcat(header, content_type);
+    char header[128];
+    char content_type[64];
+    strcpy(header, "HTTP/1.1 200 OK\r\n"
+                   "Content-Type: ");
+    strcpy(content_type, get_content_type(filename));
+    strcat(header, content_type);
+
+    printf("\n\n\nHEADER: %s; CONTENT_TYPE: %s\n\n\n", header, content_type);
 
     // get file's size
     FILE *file = fopen(root_directory, "rb");
