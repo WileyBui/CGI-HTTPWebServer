@@ -85,11 +85,10 @@ int sock_from_client(int sock_file_descriptor)
   else {
     printf("exists.\n");
 
-    // char header[] = "HTTP/1.1 200 OK\r\n"
-    // "Content-Type: text/html\n\n";
+    char header[] = "HTTP/1.1 200 OK\r\n"
+    "Content-Type: text/html\n\n";
 
-    char header[] = "HTTP/1.1 200 OK\r\n";
-                    "Content-Type: text/html\n\n";
+    // char header[] = "HTTP/1.1 200 OK\r\nContent-Type: text/html\n\n";
 
     // strcat(header, "test :)");
 
@@ -112,7 +111,8 @@ int sock_from_client(int sock_file_descriptor)
     //   header = "poop";
     // }
 
-    // strcat(header, )
+    // char header[] = "HTTP/1.1 200 OK\r\n"
+    //                 "Content-Type: text/html\n\n";
 
     // char header[128];
     // char content_type[64];
@@ -121,7 +121,8 @@ int sock_from_client(int sock_file_descriptor)
     // strcpy(content_type, get_content_type(filename));
     // strcat(header, content_type);
 
-    printf("\n<========\nHEADER: %s; %li;=======>\n\n", header, sizeof(header));
+    // printf("\n<========\nHEADER: %s; %li;=======>\n\n", header,
+    //        sizeof(header));
 
     // get file's size
     FILE *file = fopen(root_directory, "rb");
@@ -129,9 +130,9 @@ int sock_from_client(int sock_file_descriptor)
     long fsize = ftell(file);
     fseek(file, 0, SEEK_SET); /* same as rewind(file); */
 
-    write(sock_file_descriptor, header, 7);
+    write(sock_file_descriptor, header, sizeof(header) - 1);
     int fd = open(root_directory, O_RDONLY); // fd = file descriptor
-    sendfile(sock_file_descriptor, fd, NULL, fsize + 7);
+    sendfile(sock_file_descriptor, fd, NULL, fsize + sizeof(header) - 1);
     close(fd);
   }
 
