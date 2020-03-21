@@ -61,34 +61,34 @@ int sock_from_client(int sock_file_descriptor)
   char *get_first_line      = strtok(buffer, "\n");
   char *get_words_from_line = strtok(get_first_line, " ");
 
-  // going through a list of words on the very first line
+  // get method type & file name from first line of buffer
   for (int i = 0; i < 2; i++) {
-    if (i == 0) {
-      // retrieve the header's method: GET, POST, ...
-      // ex) GET ----------------> GET /favicon.ico HTTP/1.1
+    if (i == 0) { // retrieve the header's method: GET, POST, ...
+                  // ex) "GET" in -----> GET /index.htm HTTP/1.1
       method_type = get_words_from_line;
     }
-    else {
-      // retrieve the header's filename: index.htm, home.htm, ...
-      // ex) /favicon.ico in ----> GET /favicon.ico HTTP/1.1
-      filename = get_words_from_line;
+    else { // retrieve the header's filename: index.htm, home.htm, ...
+           // ex) "/index.htm" in -----> GET /index.htm HTTP/1.1
+           // also redirect to index_filename if no filename is given
+      filename = (strcmp(get_words_from_line, "/") == 0) ? index_filename
+                                                         : get_words_from_line;
     }
-    get_words_from_line = strtok(NULL, " "); // sets pointer to next word
+    get_words_from_line = strtok(NULL, " "); // sets pointer to next "word"
   }
 
-  printf("Searching for \"%s\" file: ", filename);
   strcat(root_directory, filename);
+  printf("Searching for \"%s\" file: ", root_directory);
   if (access(root_directory, F_OK) < 0) {
     printf("does NOT exist.\n");
 
-    data_to_client = "HTTP/1.1 200 OK\r\n"
+    data_to_client = "HTTP/1.1 404 Not Found\r\n"
                      "Content-Type: text/plain\n"
                      "Connection: close\n\n"
                      "HTTP 404 - File not found";
     send(sock_file_descriptor, data_to_client, strlen(data_to_client), 0);
   }
   else {
-    printf("does exist.\n");
+    printf("exists.\n");
 
     char header[] = "HTTP/1.1 200 OK\r\n"
                     "Content-Type: text/html\n\n";
@@ -108,7 +108,7 @@ int sock_from_client(int sock_file_descriptor)
 
     write(sock_file_descriptor, header, sizeof(header) - 1);
     int fd = open(root_directory, O_RDONLY); // fd = file descriptor
-    sendfile(sock_file_descriptor, fd, NULL, fsize + sizeof(header));
+    sendfile(sock_file_descriptor, fd, NULL, fsize + sizeof(header) - 1);
     close(fd);
   }
 
@@ -217,7 +217,6 @@ int main(int argc, char const *argv[])
       }
     }
   }
-  // close(s);
 
   return 0;
 }
