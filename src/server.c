@@ -8,11 +8,37 @@
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <time.h>
 #include <unistd.h>
 
 // will be imported from httpd.conf file in main()
 char root_directory[50];
 char index_filename[50];
+
+void write_to_log(int log_type, char *file_name, char *content)
+{
+  char s[64];
+  time_t now   = time(NULL);
+  struct tm *p = localtime(&now);
+  strftime(s, 64, "%c", p);
+
+  FILE *log_file;
+  if (log_type > -1) {
+    log_file = fopen("../logs/access.log", "a");
+  }
+  else {
+    log_file = fopen("../logs/error.log", "a");
+  }
+
+  if (log_file == NULL) {
+    printf("Error opening log file");
+  }
+  else {
+    fprintf(log_file, "[%s] %s: %s\n", s, content, file_name);
+  }
+  fclose(log_file);
+  return;
+}
 
 int send_to_cgi(int sock_file_descriptor, char *last_line)
 {
@@ -53,9 +79,9 @@ char *get_content_type(char *filename)
     return "text/html";
   }
   else {
-    printf(
-        "Can't determine content type; received %s as file extension instead.",
-        file_extension);
+    printf("Can't determine content type; received %s as file extension "
+           "instead.",
+           file_extension);
     return "undetermined";
   }
 }
@@ -88,9 +114,8 @@ int sock_from_client(int sock_file_descriptor)
   }
 
   strcat(root_directory, filename);
-  printf("Searching for \"%s\" file: ", root_directory);
   if (access(root_directory, F_OK) < 0) {
-    printf("does NOT exist.\n");
+    write_to_log(-1, filename, "ERROR (file not found)");
 
     data_to_client = "HTTP/1.1 404 Not Found\r\n"
                      "Content-Type: text/plain\n"
@@ -99,10 +124,10 @@ int sock_from_client(int sock_file_descriptor)
     send(sock_file_descriptor, data_to_client, strlen(data_to_client), 0);
   }
   else {
-    printf("exists.\n");
-
     if (strcmp(method_type, "GET") == 0) {
+      write_to_log(1, filename, "GET request");
       printf("Received GET method (%s)\n", filename);
+
       // get header
       char header[64];
       char *content_type = get_content_type(filename);
@@ -123,6 +148,7 @@ int sock_from_client(int sock_file_descriptor)
       close(fd);
     }
     else if (strcmp(method_type, "POST") == 0) {
+      write_to_log(1, filename, "POST request");
       printf("Received POST method (%s)\n", filename);
 
       // get last line of buffer to get the user's inputs.
@@ -138,7 +164,7 @@ int sock_from_client(int sock_file_descriptor)
 
       printf("last_line: %s\n", last_line);
       // int result = send_to_cgi(sock_file_descriptor, last_line);
-     
+
       data_to_client = "HTTP/1.1 200 OK\r\n"
                        "Content-Type: text/plain\n"
                        "Connection: close\n\n"
@@ -146,6 +172,7 @@ int sock_from_client(int sock_file_descriptor)
       send(sock_file_descriptor, data_to_client, strlen(data_to_client), 0);
     }
     else {
+      write_to_log(-1, filename, "ERROR (received other method request)");
       printf("Received some other methods: %s\n", method_type);
     }
   }
@@ -223,8 +250,8 @@ int main(int argc, char const *argv[])
       exit(EXIT_FAILURE);
     }
     else {
-      // "Fork() can be used at the place where there is division of work like a
-      // server has to handle multiple clients, So parent has to accept the
+      // "Fork() can be used at the place where there is division of work like
+      // a server has to handle multiple clients, So parent has to accept the
       // connection on regular basis, So server does fork for each client to
       // perform read-write.""
       int pid = fork();
