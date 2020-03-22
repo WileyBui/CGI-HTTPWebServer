@@ -14,6 +14,18 @@
 char root_directory[50];
 char index_filename[50];
 
+int send_to_cgi(int sock_file_descriptor, char *last_line)
+{
+  return 0;
+  // close(1);
+  // dup2(sock_file_descriptor, 1);
+
+  // char *arr[] = {last_line, NULL};
+  // int result  = execvp("./test.cgi", arr);
+  // printf("RESULTS: %i\n", result);
+  // return 0;
+}
+
 char *get_content_type(char *filename)
 {
   char *file_path = strtok(filename, ".");
@@ -52,8 +64,12 @@ int sock_from_client(int sock_file_descriptor)
 {
   char *data_to_client;
   char *method_type, *filename;
-  char buffer[1024] = {0};
-  read(sock_file_descriptor, buffer, 1024);
+  char buffer[2048] = {0};
+  char buffer2[2048];
+
+  recv(sock_file_descriptor, buffer, 2048, 0);
+
+  memcpy(buffer2, buffer, sizeof(buffer));
 
   char *get_first_line      = strtok(buffer, "\n");
   char *get_words_from_line = strtok(get_first_line, " ");
@@ -107,8 +123,27 @@ int sock_from_client(int sock_file_descriptor)
       close(fd);
     }
     else if (strcmp(method_type, "POST") == 0) {
-      printf("Received POST method\n");
+      printf("Received POST method (%s)\n", filename);
 
+      // get last line of buffer to get the user's inputs.
+      char *last_line;
+      char *line_selector = strtok(buffer2, "\n");
+
+      while (line_selector != NULL) {
+        last_line     = line_selector;
+        line_selector = strtok(NULL, " ");
+      }
+      last_line = strtok(last_line, "\n");
+      last_line = strtok(NULL, "\r\n");
+
+      printf("last_line: %s\n", last_line);
+      // int result = send_to_cgi(sock_file_descriptor, last_line);
+     
+      data_to_client = "HTTP/1.1 200 OK\r\n"
+                       "Content-Type: text/plain\n"
+                       "Connection: close\n\n"
+                       "works";
+      send(sock_file_descriptor, data_to_client, strlen(data_to_client), 0);
     }
     else {
       printf("Received some other methods: %s\n", method_type);
