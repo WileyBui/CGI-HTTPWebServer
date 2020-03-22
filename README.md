@@ -11,11 +11,9 @@ The purpose of this lab is to have a better understanding of socket programming 
 - A web browser for the client
   - Firefox, Google Chrome, or others
 - Linux/Ubuntu terminal
-  - C
-  - gcc
 
 ## Usage
-- The server requires the following options, go to `/conf/httpd.conf` to change its options:
+- The server requires the following options, to change these options, go to `/conf/httpd.conf`:
     - Number of simultaneous connections
     - ROOT directory to start looking for html files
     - INDEX filename if none given (e.g. index.html)
