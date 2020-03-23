@@ -40,16 +40,21 @@ void write_to_log_file(int log_type, char *content, char *request_type)
   return;
 }
 
-int send_to_cgi(int sock_file_descriptor, char *last_line)
+int send_to_cgi(int sock_file_descriptor, char *request_type, char *path)
 {
   printf("PASSING\n\n");
   close(1);
   dup2(sock_file_descriptor, 1);
 
-  char *arr[] = {last_line, NULL};
+  char *arr[] = {path, NULL};
 
-  setenv("QUERY_STRING", last_line, 1);
-  int result = execv("../cgi-bin/test.cgi", arr); // pass your script_name
+  setenv("QUERY_STRING", path, 1);
+  int result;
+
+  if (strcmp(request_type, "POST") == 0)
+    execv("../cgi-bin/test.cgi", arr); // pass your script_name
+  else
+    execv("../cgi-bin/get.cgi", arr); // pass your script_name
 
   if (result < 0) {
     write_to_log_file(-2, "", "ERROR 500 Internal Server Error");
@@ -111,7 +116,7 @@ int sock_from_client(int sock_file_descriptor)
   char *get_words_from_line = strtok(get_first_line, " ");
 
   // get method type & file name from first line of buffer
-  // ex) "GET" type and "/index.htm" filename in GET /index.htm HTTP/1.1
+  // ex) "GET" type and "/index.htm" filename in GET /index.htm HTTP/1.0
   for (int i = 0; i < 2; i++) {
     if (i == 0) {
       method_type = get_words_from_line;
@@ -132,14 +137,18 @@ int sock_from_client(int sock_file_descriptor)
     strcpy(root_directory, "../index.html");
   }
   else {
-    strcat(root_directory, filename);
+    if ((strstr(filename, ".cgi"))) {
+      ;
+    } else {
+      strcat(root_directory, filename);
+    }
   }
-  
+
   printf("searching... %s\n", root_directory);
   if ((access(root_directory, F_OK) < 0) && (!(strstr(filename, ".cgi")))) {
     write_to_log_file(-1, filename, "ERROR (file not found)");
 
-    data_to_client = "HTTP/1.1 404 Not Found\r\n"
+    data_to_client = "HTTP/1.0 404 Not Found\r\n"
                      "Content-Type: text/plain\n"
                      "Connection: close\n\n"
                      "HTTP 404 - File not found";
@@ -149,6 +158,17 @@ int sock_from_client(int sock_file_descriptor)
     if (strcmp(method_type, "GET") == 0) {
       write_to_log_file(1, filename, "GET request");
       printf("Received GET method (%s)\n", filename);
+
+      if (strstr(filename, ".cgi")) {
+        // only get the WANTED_FILE in /GET.cgi?FILENAME=WANTED_FILE
+        char *entry_selector = strtok(filename, "=");
+        entry_selector       = strtok(NULL, "");
+
+        char path[1028];
+        strcpy(path, root_directory);
+        strcat(path, entry_selector);
+        send_to_cgi(sock_file_descriptor, "GET", path);
+      }
 
       // get header
       char header[64];
@@ -185,7 +205,7 @@ int sock_from_client(int sock_file_descriptor)
       last_line = strtok(NULL, "\r\n");
 
       printf("last_line: %s\n", last_line);
-      int result = send_to_cgi(sock_file_descriptor, last_line);
+      send_to_cgi(sock_file_descriptor, "POST", last_line);
     }
     else {
       write_to_log_file(-2, filename, "ERROR 501: not implemented request");

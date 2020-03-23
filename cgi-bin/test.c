@@ -6,7 +6,7 @@ int main(void)
 {
   char *data, *first_line, *second_line, *fl_selector, *sl_selector,
       *first_word, *second_word, combined_words[2048];
-  printf("HTTP/1.1 200 OK\r\n");
+  printf("HTTP/1.0 200 OK\r\n");
   printf("Content-Type:text/html\n\n");
 
   data = getenv("QUERY_STRING");
@@ -30,7 +30,7 @@ int main(void)
   strcat(combined_words, second_word);
 
   printf("<HTML>");
-  printf("<H1> Add two words together!</H1>");
+  printf("<H1>POST: Add two words together!</H1>");
   printf("<FORM ACTION=http://localhost:8080/test.cgi METHOD=POST>");
   printf("First Word: <INPUT NAME=First Word>");
   printf("Second word: <INPUT NAME=Second word>");
