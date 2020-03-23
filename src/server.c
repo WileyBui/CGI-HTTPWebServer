@@ -51,7 +51,11 @@ int send_to_cgi(int sock_file_descriptor, char *request_type, char *path)
   int result;
 
   if (strcmp(request_type, "POST") == 0)
+<<<<<<< HEAD
     result = execv("../cgi-bin/POST.cgi", arr); // pass your script_name
+=======
+    execv("../cgi-bin/post.cgi", arr); // pass your script_name
+>>>>>>> origin/Gus
   else
     result = execv("../cgi-bin/GET.cgi", arr); // pass your script_name
 
