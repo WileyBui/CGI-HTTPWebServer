@@ -43,7 +43,18 @@ __*/src -*__ This is where all of our source code resides. This is essentially t
 
   ![Image](https://i.snipboard.io/sP0yGQ.jpg)
   
-5. To test the server, change to the /src directory.
+5. To test the server, change to the /src directory. Compile the c file and run it. This can be done by "gcc server.c && ./a.out"
+The server will run on the port specified in the config file. If unchanged, it will be port 8080. 
+
+Now, using a web browser, enter "http://localhost:8080/". This will load the index.htm file and display the webpage.
+Additionally, you can load certain files by doing "http://localhost:8080/FILENAME". If the file exists, it will be displayed. 
+If it doesn't exist, there will be a Error 404 - File Not Found
+
+To make use of the CGI, we have two forms. One is to demonstrate how CGI handles POST requests, the other shows how CGI handles GET messages.
+
+If you go to "http://localhost:8080/form.htm", you can send a POST message to the server, it will get sent to and handled by the executable webserver. This form is rather simple and concatenates two strings with a space between, however it demonstrates POST requests.
+
+If you go to "http://localhost:8080
 
 ### Communication and Tasks
 - [See here](https://docs.google.com/document/d/1b5y2U4AuAkZoI1Iazu_hnQO1CJy929CKRletR1ds0Uc/edit).
