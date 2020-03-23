@@ -54,7 +54,10 @@ To make use of the CGI, we have two forms. One is to demonstrate how CGI handles
 
 If you go to "http://localhost:8080/form.htm", you can send a POST message to the server, it will get sent to and handled by the executable webserver. This form is rather simple and concatenates two strings with a space between, however it demonstrates POST requests.
 
-If you go to "http://localhost:8080
+If you go to "http://localhost:8080/form2.htm", you can search for a particular file with a GET request. The request will be sent to the server, then the executable webserver. The CGI executable will then reply to the client with the requested file if it exists, or an error if it doesn't. 
+
+### Additional Notes
+- When the server sends a file back to the client, it will always send an HTTP header first, two new lines, and then the contents.
 
 ### Communication and Tasks
 - [See here](https://docs.google.com/document/d/1b5y2U4AuAkZoI1Iazu_hnQO1CJy929CKRletR1ds0Uc/edit).
