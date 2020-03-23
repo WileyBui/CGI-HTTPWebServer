@@ -10,17 +10,17 @@ The main goal of this lab is to create a HTTP web server based on RFC/1945 (see 
 Additionally, the server should be efficient in regards to speed and resource allocation. 
 
 ### Content Description
-/cgi-bin - This contains our CGI files used to handle POST and GET requests (where the executable webserver resides).
+__*/cgi-bin -*__ This contains our CGI files used to handle POST and GET requests (where the executable webserver resides).
 
 When a client sends a POST/GET request to the server, the server will call the CGI executable to handle the request. The main use for this is to allow the executable to handle the work, while the server just passes it off and then can handle new requests. This is a good use of resource allocation and helps support more users concurrently.
 
-/conf - The config folder contains one .conf file which is a configuration file for the server. It states the amount of concurrent users, root content location, index location, and port to be run on.
+__*/conf -*__ The config folder contains one .conf file which is a configuration file for the server. It states the amount of concurrent users, root content location, index location, and port to be run on.
 
-/contents - All of the .html, .gif, .jgp (contents) reside in this folder. When the index.html is received, it sends requests for all these files. These files are used to make the webpage that is displayed on the client's browser. 
+__*/contents -*__ All of the .html, .gif, .jgp (contents) reside in this folder. When the index.html is received, it sends requests for all these files. These files are used to make the webpage that is displayed on the client's browser. 
 
-/logs - This folder contains the log files for all access commands as well as errors.
+__*/logs -*__ This folder contains the log files for all access commands as well as errors.
 
-/src - This is where all of our source code resides. This is essentially the folder where the server is located.
+__*/src -*__ This is where all of our source code resides. This is essentially the folder where the server is located.
 
 ### Set-up
 1. Clone the repository: `https://github.com/WileyBui/INET4021Labs.git`
