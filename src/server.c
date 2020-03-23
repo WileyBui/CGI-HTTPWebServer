@@ -15,46 +15,49 @@
 char root_directory[50];
 char index_filename[50];
 
-void write_to_log(int log_type, char *file_name, char *content)
+void write_to_log_file(int log_type, char *content, char *request_type)
 {
+  // gets date and time representation
   char s[64];
   time_t now   = time(NULL);
   struct tm *p = localtime(&now);
   strftime(s, 64, "%c", p);
 
   FILE *log_file;
-  if (log_type > -1) {
+  if (log_type > -1)
     log_file = fopen("../logs/access.log", "a");
-  }
-  else {
+  else
     log_file = fopen("../logs/error.log", "a");
-  }
 
-  if (log_file == NULL) {
+  if (log_file == NULL)
     printf("Error opening log file");
-  }
-  else {
-    fprintf(log_file, "[%s] %s: %s\n", s, content, file_name);
-  }
+  else
+    fprintf(log_file, "[%s] %s: %s\n", s, request_type, content);
   fclose(log_file);
+
+  if (log_type == -2)
+    printf("%s\n", content);
   return;
 }
 
 int send_to_cgi(int sock_file_descriptor, char *last_line)
 {
+  printf("PASSING\n\n");
   close(1);
   dup2(sock_file_descriptor, 1);
 
   char *arr[] = {last_line, NULL};
-  //int result  = execvp("./test.cgi", arr);
-  //printf("RESULTS: %i\n", result);
-  //char *send = "./test.cgi?LOGIN=hi&PASSWORD=hey&GO=Submit";
-  
+
   setenv("QUERY_STRING", last_line, 1);
-  execv("../cgi-bin/test.cgi", arr); // pass your script_name
+  int result = execv("../cgi-bin/test.cgi", arr); // pass your script_name
 
-  printf("Sent exec to test.cgi\n");
-
+  if (result < 0) {
+    write_to_log_file(-2, "", "ERROR 500 Internal Server Error");
+    char *send_500_error = "HTTP/1.0 500 Internal Server Error\r\n"
+                           "Content-Type: text/plain\n\n"
+                           "500 Internal Server Error";
+    send(sock_file_descriptor, send_500_error, strlen(send_500_error), 0);
+  }
   return 0;
 }
 
@@ -100,6 +103,7 @@ int sock_from_client(int sock_file_descriptor)
   char buffer2[2048];
 
   recv(sock_file_descriptor, buffer, 2048, 0);
+  printf("\n%s\n", buffer);
 
   memcpy(buffer2, buffer, sizeof(buffer));
 
@@ -119,9 +123,21 @@ int sock_from_client(int sock_file_descriptor)
     get_words_from_line = strtok(NULL, " "); // sets pointer to next "word"
   }
 
-  strcat(root_directory, filename);
-  if (access(root_directory, F_OK) < 0) {
-    write_to_log(-1, filename, "ERROR (file not found)");
+  // If the client wants to look for an index.html file, then the server must
+  // redirect to the right path (outside of /src/ and /contents/ directories).
+  // Otherwise, look for a specific file in /contents/ (AKA root_directory).
+  if ((strcmp(filename, "/index.html") == 0) ||
+      (strcmp(filename, "../index.html") == 0)) {
+    memset(root_directory, '\0', sizeof(root_directory));
+    strcpy(root_directory, "../index.html");
+  }
+  else {
+    strcat(root_directory, filename);
+  }
+  
+  printf("searching... %s\n", root_directory);
+  if ((access(root_directory, F_OK) < 0) && (!(strstr(filename, ".cgi")))) {
+    write_to_log_file(-1, filename, "ERROR (file not found)");
 
     data_to_client = "HTTP/1.1 404 Not Found\r\n"
                      "Content-Type: text/plain\n"
@@ -131,18 +147,18 @@ int sock_from_client(int sock_file_descriptor)
   }
   else {
     if (strcmp(method_type, "GET") == 0) {
-      write_to_log(1, filename, "GET request");
+      write_to_log_file(1, filename, "GET request");
       printf("Received GET method (%s)\n", filename);
 
       // get header
       char header[64];
       char *content_type = get_content_type(filename);
-      strcpy(header, "HTTP/1.1 200 OK\r\n"
+      strcpy(header, "HTTP/1.0 200 OK\r\n"
                      "Content-Type: ");
       strcat(header, content_type);
       strcat(header, "\n\n");
 
-      // get file's size
+      // get file's size to send the file
       FILE *file = fopen(root_directory, "rb");
       fseek(file, 0, SEEK_END);
       long fsize = ftell(file);
@@ -154,7 +170,7 @@ int sock_from_client(int sock_file_descriptor)
       close(fd);
     }
     else if (strcmp(method_type, "POST") == 0) {
-      write_to_log(1, filename, "POST request");
+      write_to_log_file(1, filename, "POST request");
       printf("Received POST method (%s)\n", filename);
 
       // get last line of buffer to get the user's inputs.
@@ -170,17 +186,13 @@ int sock_from_client(int sock_file_descriptor)
 
       printf("last_line: %s\n", last_line);
       int result = send_to_cgi(sock_file_descriptor, last_line);
-
-      // data_to_client = "HTTP/1.1 200 OK\r\n"
-      //                  "Content-Type: text/plain\n"
-      //                  "Connection: close\n\n"
-      //                  "works";
-      // send(sock_file_descriptor, data_to_client, strlen(data_to_client), 0);
-
     }
     else {
-      write_to_log(-1, filename, "ERROR (received other method request)");
-      printf("Received some other methods: %s\n", method_type);
+      write_to_log_file(-2, filename, "ERROR 501: not implemented request");
+      char *send_501_error = "HTTP/1.0 501 Not Implemented\r\n"
+                             "Content-Type: text/plain\n\n"
+                             "501 Not Implemented";
+      send(sock_file_descriptor, send_501_error, strlen(send_501_error), 0);
     }
   }
 
@@ -195,7 +207,7 @@ int main(int argc, char const *argv[])
   printf("\nImporting settings from /conf/httpd.conf...\n");
   FILE *ptr = fopen("../conf/httpd.conf", "r");
   if (ptr == NULL) {
-    printf("Error opening up configuration file.\n");
+    write_to_log_file(-2, "Opening ../conf/httpd.conf file failed.", "ERROR");
     exit(EXIT_FAILURE);
   }
 
@@ -210,6 +222,7 @@ int main(int argc, char const *argv[])
            "   - index filename, if none given\n"
            "   - port number to run on the server\n");
     fclose(ptr);
+    write_to_log_file(-1, "Settings from /conf/httpd.conf failed", "ERROR");
     exit(EXIT_FAILURE);
   }
   fclose(ptr); // closing the file
@@ -232,19 +245,19 @@ int main(int argc, char const *argv[])
   // Allocate a socket
   s = socket(AF_INET, SOCK_STREAM, 0); // TCP uses SOCK_STREAM
   if (s < 0) {
-    printf("Socket failed - can't be created.\n");
+    write_to_log_file(-2, "Socket failed - can't be created.", "ERROR");
     exit(EXIT_FAILURE);
   }
 
   // Bind the socket
   if (bind(s, (struct sockaddr *)&address, sizeof(address)) < 0) {
-    printf("Socket binding failed.\n");
+    write_to_log_file(-2, "Socket binding failed.", "ERROR");
     exit(EXIT_FAILURE);
   }
 
   // Put server to passive mode
   if (listen(s, simultaneous_connections) < 0) {
-    printf("Listening failed.\n");
+    write_to_log_file(-2, "listen() failed.", "ERROR");
     exit(EXIT_FAILURE);
   }
 
@@ -253,14 +266,13 @@ int main(int argc, char const *argv[])
     new_sock = accept(s, (struct sockaddr *)&address, &sock_size);
 
     if (new_sock < 0) {
-      printf("New socket failed.\n");
+      write_to_log_file(-2, "New socket - accept() failed.", "ERROR");
       exit(EXIT_FAILURE);
     }
     else {
       // "Fork() can be used at the place where there is division of work like
       // a server has to handle multiple clients, So parent has to accept the
-      // connection on regular basis, So server does fork for each client to
-      // perform read-write.""
+      // connection on regular basis, So server does fork for each client"
       int pid = fork();
 
       if (pid == 0) { // child
@@ -274,7 +286,7 @@ int main(int argc, char const *argv[])
                           // server doesn't need it.
       }
       else {
-        printf("fork() failed.\n");
+        write_to_log_file(-2, "fork() failed.", "ERROR");
         exit(EXIT_FAILURE);
       }
     }
