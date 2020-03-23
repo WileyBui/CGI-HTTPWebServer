@@ -31,12 +31,14 @@ Additionally, you can load certain files by doing "http://localhost:8080/FILENAM
 If it doesn't exist, there will be a Error 404 - File Not Found
 
 Before we begin, it is important to note that when the server sends a message to the web browser client, it is preceded by an HTTP header. An example of this is :
-'''
+
+```
    "HTTP/1.0 404 Not Found\r\n"
    "Content-Type: text/plain\n"
    "Connection: close\n\n"
    "HTTP 404 - File not found";
-'''
+```
+
 This is sending an error back the HTTP client. Other forms use a 200 OK, instead of 404 Not Found, but otherwise hold the same form. You edit the second line based on what content you're sending. You can then send data after two new lines.
 
 When a client requests for a file, the server receives a GET request. The server then sends the request to the CGI (common gateway interface). The goal of using CGI is for dynamic web interactions, such as a form, by adding backend applications that take data (inputs) from an HTML form. Another type of request is a POST. This is when the client sends data to the server. We'll provide an example of each. 
@@ -46,13 +48,15 @@ If you go to "http://localhost:8080/form.htm", you can send a POST message to th
 
 Get Example:
 This is when the client is trying to get a file from the sever. This happens frequently, especially when the <index.htm> file is requested. CGI tries to find the file, if it can't then it sends the 404 Not Found error, found above, to the client.
-'''
+
+```
 If the file is found, then we'd send something back like : 
    "HTTP/1.0 200 OK\r\n"
    "Content-Type: %s\n\n"
    
    CONTENT
-'''
+```
+
 The CONTENT would be replaced by the contents of the file. The browser would then display this content. That's how CGI handles Get requests.
 
 ### Communication and Tasks
