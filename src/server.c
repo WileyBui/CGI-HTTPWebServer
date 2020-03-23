@@ -42,14 +42,18 @@ void write_to_log(int log_type, char *file_name, char *content)
 
 int send_to_cgi(int sock_file_descriptor, char *last_line)
 {
-  return 0;
-  // close(1);
-  // dup2(sock_file_descriptor, 1);
+  close(1);
+  dup2(sock_file_descriptor, 1);
 
-  // char *arr[] = {last_line, NULL};
-  // int result  = execvp("./test.cgi", arr);
-  // printf("RESULTS: %i\n", result);
-  // return 0;
+  char *arr[] = {last_line, NULL};
+  //int result  = execvp("./test.cgi", arr);
+  //printf("RESULTS: %i\n", result);
+  //char *send = "./test.cgi?LOGIN=hi&PASSWORD=hey&GO=Submit";
+  
+  execv("../cgi-bin/test.cgi", arr); // pass your script_name
+  printf("Sent exec\n");
+
+  return 0;
 }
 
 char *get_content_type(char *filename)
@@ -163,13 +167,14 @@ int sock_from_client(int sock_file_descriptor)
       last_line = strtok(NULL, "\r\n");
 
       printf("last_line: %s\n", last_line);
-      // int result = send_to_cgi(sock_file_descriptor, last_line);
+      int result = send_to_cgi(sock_file_descriptor, last_line);
 
-      data_to_client = "HTTP/1.1 200 OK\r\n"
-                       "Content-Type: text/plain\n"
-                       "Connection: close\n\n"
-                       "works";
-      send(sock_file_descriptor, data_to_client, strlen(data_to_client), 0);
+      // data_to_client = "HTTP/1.1 200 OK\r\n"
+      //                  "Content-Type: text/plain\n"
+      //                  "Connection: close\n\n"
+      //                  "works";
+      // send(sock_file_descriptor, data_to_client, strlen(data_to_client), 0);
+
     }
     else {
       write_to_log(-1, filename, "ERROR (received other method request)");
