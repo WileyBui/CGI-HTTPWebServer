@@ -39,14 +39,16 @@ Before we begin, it is important to note that when the server sends a message to
    "HTTP 404 - File not found";
 ```
 
-This is sending an error back the HTTP client. Other forms use a 200 OK, instead of 404 Not Found, but otherwise hold the same form. You edit the second line based on what content you're sending. You can then send data after two new lines.
+This is sending an error back the HTTP client because the requested file can't be found. Other forms use a "200 OK", instead of "404 Not Found", but otherwise hold the same form. You edit the second line based on what content you're sending. You can then send data after two new lines.
 
 When a client requests for a file, the server receives a GET request. The server then sends the request to the CGI (common gateway interface). The goal of using CGI is for dynamic web interactions, such as a form, by adding backend applications that take data (inputs) from an HTML form. Another type of request is a POST. This is when the client sends data to the server. We'll provide an example of each. 
 
-POST Example:
+__*POST Example:*__
+
 If you go to "http://localhost:8080/form.htm", you can send a POST message to the server. The form will get sent to and handled by the executable CGI webserver as a POST request. Our example form takes in two word inputs, sends the form and data to CGI, and CGI sends back the form an the content (which is the string concatenated. This is how CGI handles POST requests.
 
-Get Example:
+__*Get Example:*__
+
 This is when the client is trying to get a file from the sever. This happens frequently, especially when the <index.htm> file is requested. CGI tries to find the file, if it can't then it sends the 404 Not Found error, found above, to the client.
 
 ```
