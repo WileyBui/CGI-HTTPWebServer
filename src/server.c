@@ -42,7 +42,6 @@ void write_to_log_file(int log_type, char *content, char *request_type)
 
 int send_to_cgi(int sock_file_descriptor, char *request_type, char *path)
 {
-  printf("PASSING\n\n");
   close(1);
   dup2(sock_file_descriptor, 1);
 
@@ -52,9 +51,9 @@ int send_to_cgi(int sock_file_descriptor, char *request_type, char *path)
   int result;
 
   if (strcmp(request_type, "POST") == 0)
-    execv("../cgi-bin/test.cgi", arr); // pass your script_name
+    result = execv("../cgi-bin/test.cgi", arr); // pass your script_name
   else
-    execv("../cgi-bin/get.cgi", arr); // pass your script_name
+    result = execv("../cgi-bin/get.cgi", arr); // pass your script_name
 
   if (result < 0) {
     write_to_log_file(-2, "", "ERROR 500 Internal Server Error");
@@ -137,9 +136,7 @@ int sock_from_client(int sock_file_descriptor)
     strcpy(root_directory, "../index.html");
   }
   else {
-    if ((strstr(filename, ".cgi"))) {
-      ;
-    } else {
+    if (!(strstr(filename, ".cgi"))) {
       strcat(root_directory, filename);
     }
   }
@@ -170,6 +167,8 @@ int sock_from_client(int sock_file_descriptor)
         send_to_cgi(sock_file_descriptor, "GET", path);
       }
 
+      send_to_cgi(sock_file_descriptor, "GET", root_directory);
+      return 0;
       // get header
       char header[64];
       char *content_type = get_content_type(filename);

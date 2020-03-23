@@ -1,5 +1,2 @@
-hello
-This
-is
-Gus
-nice
+PATH [0]
+PATH [0]
