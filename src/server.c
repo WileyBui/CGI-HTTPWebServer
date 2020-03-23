@@ -52,7 +52,7 @@ int send_to_cgi(int sock_file_descriptor, char *request_type, char *path)
   int result;
 
   if (strcmp(request_type, "POST") == 0)
-    execv("../cgi-bin/test.cgi", arr); // pass your script_name
+    execv("../cgi-bin/post.cgi", arr); // pass your script_name
   else
     execv("../cgi-bin/get.cgi", arr); // pass your script_name
 

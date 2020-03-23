@@ -6,7 +6,7 @@ int main(void)
 {
   char *data, *first_line, *second_line, *fl_selector, *sl_selector,
       *first_word, *second_word, combined_words[2048];
-  printf("HTTP/1.0 200 OK\r\n");
+  printf("HTTP/1.1 200 OK\r\n");
   printf("Content-Type:text/html\n\n");
 
   data = getenv("QUERY_STRING");
