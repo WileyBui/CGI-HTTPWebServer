@@ -109,8 +109,7 @@ int sock_from_client(int sock_file_descriptor)
     write_to_log_file(-1, filename, "ERROR (file not found)");
 
     data_to_client = "HTTP/1.0 404 Not Found\r\n"
-                     "Content-Type: text/plain\n"
-                     "Connection: close\n\n"
+                     "Content-Type: text/plain\n\n"
                      "HTTP 404 - File not found";
     send(sock_file_descriptor, data_to_client, strlen(data_to_client), 0);
   }
