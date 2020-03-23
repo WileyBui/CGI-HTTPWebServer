@@ -51,9 +51,9 @@ int send_to_cgi(int sock_file_descriptor, char *request_type, char *path)
   int result;
 
   if (strcmp(request_type, "POST") == 0)
-    result = execv("../cgi-bin/test.cgi", arr); // pass your script_name
+    result = execv("../cgi-bin/POST.cgi", arr); // pass your script_name
   else
-    result = execv("../cgi-bin/get.cgi", arr); // pass your script_name
+    result = execv("../cgi-bin/GET.cgi", arr); // pass your script_name
 
   if (result < 0) {
     write_to_log_file(-2, "", "ERROR 500 Internal Server Error");
@@ -65,40 +65,6 @@ int send_to_cgi(int sock_file_descriptor, char *request_type, char *path)
   return 0;
 }
 
-char *get_content_type(char *filename)
-{
-  char *file_path = strtok(filename, ".");
-  char *file_extension;
-  while (file_path != NULL) { // find the file extension
-    file_extension = file_path;
-    file_path      = strtok(NULL, " ");
-  }
-
-  // sets file extension to lowercase in order to compare strings
-  for (int i = 0; file_extension[i]; i++) {
-    file_extension[i] = tolower(file_extension[i]);
-  }
-
-  // comparing the strings to match with its corresponding type
-  if ((strcmp(file_extension, "jpeg") == 0) ||
-      (strcmp(file_extension, "jpg") == 0)) {
-    return "image/jpeg";
-  }
-  else if (strcmp(file_extension, "gif") == 0) {
-    return "image/gif";
-  }
-  else if ((strcmp(file_extension, "html") == 0) ||
-           (strcmp(file_extension, "htm") == 0)) {
-    return "text/html";
-  }
-  else {
-    printf("Can't determine content type; received %s as file extension "
-           "instead.",
-           file_extension);
-    return "undetermined";
-  }
-}
-
 int sock_from_client(int sock_file_descriptor)
 {
   char *data_to_client;
@@ -107,8 +73,6 @@ int sock_from_client(int sock_file_descriptor)
   char buffer2[2048];
 
   recv(sock_file_descriptor, buffer, 2048, 0);
-  printf("\n%s\n", buffer);
-
   memcpy(buffer2, buffer, sizeof(buffer));
 
   char *get_first_line      = strtok(buffer, "\n");
@@ -141,7 +105,6 @@ int sock_from_client(int sock_file_descriptor)
     }
   }
 
-  printf("searching... %s\n", root_directory);
   if ((access(root_directory, F_OK) < 0) && (!(strstr(filename, ".cgi")))) {
     write_to_log_file(-1, filename, "ERROR (file not found)");
 
@@ -156,37 +119,7 @@ int sock_from_client(int sock_file_descriptor)
       write_to_log_file(1, filename, "GET request");
       printf("Received GET method (%s)\n", filename);
 
-      if (strstr(filename, ".cgi")) {
-        // only get the WANTED_FILE in /GET.cgi?FILENAME=WANTED_FILE
-        char *entry_selector = strtok(filename, "=");
-        entry_selector       = strtok(NULL, "");
-
-        char path[1028];
-        strcpy(path, root_directory);
-        strcat(path, entry_selector);
-        send_to_cgi(sock_file_descriptor, "GET", path);
-      }
-
       send_to_cgi(sock_file_descriptor, "GET", root_directory);
-      return 0;
-      // get header
-      char header[64];
-      char *content_type = get_content_type(filename);
-      strcpy(header, "HTTP/1.0 200 OK\r\n"
-                     "Content-Type: ");
-      strcat(header, content_type);
-      strcat(header, "\n\n");
-
-      // get file's size to send the file
-      FILE *file = fopen(root_directory, "rb");
-      fseek(file, 0, SEEK_END);
-      long fsize = ftell(file);
-      fseek(file, 0, SEEK_SET); /* same as rewind(file); */
-
-      write(sock_file_descriptor, header, strlen(header));
-      int fd = open(root_directory, O_RDONLY); // fd = file descriptor
-      sendfile(sock_file_descriptor, fd, NULL, fsize + strlen(header));
-      close(fd);
     }
     else if (strcmp(method_type, "POST") == 0) {
       write_to_log_file(1, filename, "POST request");
@@ -203,7 +136,6 @@ int sock_from_client(int sock_file_descriptor)
       last_line = strtok(last_line, "\n");
       last_line = strtok(NULL, "\r\n");
 
-      printf("last_line: %s\n", last_line);
       send_to_cgi(sock_file_descriptor, "POST", last_line);
     }
     else {

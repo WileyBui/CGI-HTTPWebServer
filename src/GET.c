@@ -48,14 +48,12 @@ int main(void)
            "HTTP 404 - File not found");
     return -1;
   }
-  FILE *fp = fopen("../src/test.txt", "a");
   char header[64];
   char *content_type = get_content_type(data);
 
   printf("HTTP/1.0 200 OK\r\n"
          "Content-Type: %s\n\n",
          content_type);
-  fclose(fp);
 
   FILE *filePointer  = fopen(path, "rb"); // open existing binary picture
   unsigned long file_length;
