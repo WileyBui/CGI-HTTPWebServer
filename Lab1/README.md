@@ -9,6 +9,11 @@ The main goal of this lab is to create a HTTP web server based on [RFC/1945](htt
 
 Additionally, the server should be efficient in regards to speed and resource allocation. 
 
+### Algorithms & Abstractions
+Our server uses CGI as an abstraction to take inputs from an HTML form and then return the output. The client has no idea the CGI is there but is happy when it receives a response, regardless of whom it's from. 
+
+As for our algorithm, the server takes in input, then parses it to find if it's a POST/GET request, then sends the data to the CGI for processing.
+
 ### Content Description
 - __*/cgi-bin -*__ This contains our CGI files used to handle POST and GET requests (where the executable webserver resides).
 
@@ -36,18 +41,23 @@ If it doesn't exist, there will be a Error 404 - File Not Found
 Before we begin, it is important to note that when the server sends a message to the web browser client, it is preceded by an HTTP header. An example of this is :
 
 ```
-   "HTTP/1.0 404 Not Found\r\n"
-   "Content-Type: text/plain\n"
-   "HTTP 404 - File not found";
+   HTTP/1.0 404 Not Found\r\n
+   Content-Type: text/plain\n
+   Content-Length: 1231
+   Connection: Close
+   Last-Modified: Mon, 23 Mar 2020 02:49:28 GMT
+   Expires: Sun, 17 Jan 2038 19:14:07 GMT
+   Date: Mon, 23 Mar 2020 04:49:28 GMT   
+   
+   HTTP 404 - File not found
 ```
 
 This is sending an error back the HTTP client because the requested file can't be found. Other forms use a "200 OK", instead of "404 Not Found", but otherwise hold the same form. You edit the second line based on what content you're sending. You can then send data after two new lines.
 
 When a client requests for a file, the server receives a GET request. Each request may have many iterative calls to the server for addition files, such as the `index.html` request to call for other images. The server then sends the request to the CGI (Common Gateway Interface). The goal of using CGI is for dynamic web interactions, such as a form, by adding backend applications that take data (inputs) from an HTML form. Another type of request is a POST. This is when the client sends data to the server. We'll provide an example of each.
 
-
 __*POST Example:*__
-If you go to "http://localhost:8080/form.htm", you can send a POST message to the server. The form will get sent to and handled by the executable CGI webserver as a POST request. Our example form takes in two word inputs, sends the form and data to CGI, and CGI sends back the form an the content (which is the string concatenated). This is how CGI handles POST requests.
+If you go to "http://localhost:8080/form.htm", you can send a POST message to the server. The form will get sent to and handled by the executable CGI webserver as a POST request. Our example form takes in two word inputs, sends the form and data to CGI, and CGI sends back the form and the content (which is the string concatenated). This is an example of how CGI handles POST requests.
 
 __*GET Example:*__
 This is when the client is trying to get a file from the server. This happens frequently, especially when the <index.htm> file is requested. CGI tries to find the file, if it can't then it sends the 404 Not Found error, found above, to the client.
@@ -65,4 +75,14 @@ If the file is found, then the server sends a request back, such as
     CONTENT
 ```
 
-The CONTENT would be replaced by the contents of the file. The browser would then display this content. That's how CGI handles GET requests.
+The first chunk of text is the HTTP header. The CONTENT would be replaced by the contents of the file. The browser would then display this content. That's how CGI handles GET requests.
+
+### Purpose
+Assuming the client is the user and the admin is the server...
+
+Admin - The purpose of this project for admins is to see how to handle POST and GET requests in an executable webserver. Programming the server also helps understand how to send HTTP headers and communicate with a webpage, as well as browsing for files and sending them to a webpage. 
+
+User - The purpose of this project for users is to learn how to navigate webpages and what certain errors mean when received. For example, if trying to load a file from the server that doesn't exist, there is going to be a 404 File Not Found error.
+
+### Group Effort
+We both put in effort to make this project work. 
