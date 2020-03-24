@@ -22,6 +22,9 @@ __*/logs -*__ This folder contains the log files for all access commands as well
 
 __*/src -*__ This is where all of our source code resides. This is essentially the folder where the server is located.
 
+### Algorithms and abstraction
+CONTENT
+
 ### Set-up & Usability
 To test the server, change to the /src directory. Compile the c file and run it. This can be done by "gcc server.c && ./a.out"
 The server will run on the port specified in the config file. If unchanged, it will be port 8080. 
@@ -61,6 +64,12 @@ If the file is found, then we'd send something back like :
 ```
 
 The CONTENT would be replaced by the contents of the file. The browser would then display this content. That's how CGI handles Get requests.
+
+### Purpose
+CONTENT
+
+### Group Effort
+We both bullshited everything and somehow it managed to work
 
 ### Communication and Tasks
 - [See here](https://docs.google.com/document/d/1b5y2U4AuAkZoI1Iazu_hnQO1CJy929CKRletR1ds0Uc/edit).
