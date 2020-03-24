@@ -44,8 +44,8 @@ Before we begin, it is important to note that when the server sends a message to
 ```
    HTTP/1.0 404 Not Found
    Content-Type: text/plain
-   Content-Length: 1231
-   Connection: Close
+   Content-Length: 25
+   Connection: close
    Last-Modified: Mon, 23 Mar 2020 02:49:28 GMT
    Expires: Sun, 17 Jan 2038 19:14:07 GMT
    Date: Mon, 23 Mar 2020 04:49:28 GMT   
