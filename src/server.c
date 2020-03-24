@@ -59,6 +59,10 @@ int send_to_cgi(int sock_file_descriptor, char *request_type, char *path)
     write_to_log_file(-2, "", "ERROR 500 Internal Server Error");
     char *send_500_error = "HTTP/1.0 500 Internal Server Error\r\n"
                            "Content-Type: text/plain\n\n"
+                           "Connection: Close\r\n"
+                           "Last-Modified: Mon, 23 Mar 2020 02:49:28 GMT\r\n"
+                           "Expires: Sun, 17 Jan 2038 19:14:07 GMT\r\n"
+                           "Date: Mon, 23 Mar 2020 04:49:28 GMT\n\n" 
                            "500 Internal Server Error";
     send(sock_file_descriptor, send_500_error, strlen(send_500_error), 0);
   }
@@ -109,7 +113,12 @@ int sock_from_client(int sock_file_descriptor)
     write_to_log_file(-1, filename, "ERROR (file not found)");
 
     data_to_client = "HTTP/1.0 404 Not Found\r\n"
-                     "Content-Type: text/plain\n\n"
+                     "Content-Type: text/plain\r\n"
+                     "Content-Length: 25\r\n"
+                     "Connection: Close\r\n"
+                     "Last-Modified: Mon, 23 Mar 2020 02:49:28 GMT\r\n"
+                     "Expires: Sun, 17 Jan 2038 19:14:07 GMT\r\n"
+                     "Date: Mon, 23 Mar 2020 04:49:28 GMT\n\n" 
                      "HTTP 404 - File not found";
     send(sock_file_descriptor, data_to_client, strlen(data_to_client), 0);
   }
@@ -140,7 +149,12 @@ int sock_from_client(int sock_file_descriptor)
     else {
       write_to_log_file(-2, filename, "ERROR 501: not implemented request");
       char *send_501_error = "HTTP/1.0 501 Not Implemented\r\n"
-                             "Content-Type: text/plain\n\n"
+                             "Content-Type: text/plain\r\n"
+                             "Content-Length: 19\r\n"
+                             "Connection: Close\r\n"
+                             "Last-Modified: Mon, 23 Mar 2020 02:49:28 GMT\r\n"
+                             "Expires: Sun, 17 Jan 2038 19:14:07 GMT\r\n"
+                             "Date: Mon, 23 Mar 2020 04:49:28 GMT\n\n" 
                              "501 Not Implemented";
       send(sock_file_descriptor, send_501_error, strlen(send_501_error), 0);
     }
