@@ -59,6 +59,7 @@ int send_to_cgi(int sock_file_descriptor, char *request_type, char *path)
     write_to_log_file(-2, "", "ERROR 500 Internal Server Error");
     char *send_500_error = "HTTP/1.0 500 Internal Server Error\r\n"
                            "Content-Type: text/plain\n\n"
+                           "Content-Length: 25\r\n"
                            "Connection: Close\r\n"
                            "Last-Modified: Mon, 23 Mar 2020 02:49:28 GMT\r\n"
                            "Expires: Sun, 17 Jan 2038 19:14:07 GMT\r\n"
