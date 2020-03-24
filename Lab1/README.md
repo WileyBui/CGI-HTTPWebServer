@@ -59,8 +59,6 @@ When a client requests for a file, the server receives a GET request. Each reque
 __*POST Example:*__
 If you go to "http://localhost:8080/form.htm", you can send a POST message to the server. The form will get sent to and handled by the executable CGI webserver as a POST request. Our example form takes in two word inputs, sends the form and data to CGI, and CGI sends back the form and the content (which is the string concatenated). This is an example of how CGI handles POST requests.
 
-If you go to "http://localhost:8080/form2.htm", you can send a POST message to the sever. The form will get sent to and hadled by the executable CGI webserver as a POST request. Our example form takes in two integer inputs, sends the form and data to CGI, and CGI sends back the form and the content (which is the integers added). This is another example of how CGI handles POST requests.
-
 __*GET Example:*__
 This is when the client is trying to get a file from the server. This happens frequently, especially when the <index.htm> file is requested. CGI tries to find the file, if it can't then it sends the 404 Not Found error, found above, to the client.
 
