@@ -87,4 +87,4 @@ Admin - The purpose of this project for admins is to see how to handle POST and 
 User - The purpose of this project for users is to learn how to navigate webpages and what certain errors mean when received. For example, if trying to load a file from the server that doesn't exist, there is going to be a 404 File Not Found error.
 
 ### Group Effort
-We both put in effort to making this project work. 
+We both put in effort to make this project work. 
