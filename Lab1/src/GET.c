@@ -32,29 +32,33 @@ char *get_content_type(char *filename)
     return "text/html";
   }
   else {
-    return "undetermined";
+    return "text/plain";
   }
 }
 
 int main(void)
 {
-  char *data, path[2048];
-
+  char *data, path[2048], time_buffer[256];
   data = getenv("QUERY_STRING");
   strcpy(path, data);
 
+  time_t now   = time(0);
+  struct tm tm = *gmtime(&now);
+  strftime(time_buffer, sizeof(time_buffer), "%a, %d %b %Y %H:%M:%S %Z", &tm);
+
   if (access(data, F_OK) < 0) {
-    printf("HTTP/1.0 404 Not Found\r\n"
-           "Content-Type: text/plain\n\n"
-           "HTTP 404 - File not found");
+    // This should not happen, but just in case if the file doesn't exist
+    printf("HTTP/1.0 404 Not Found\n");
+    printf("Content-Type: text/plain\n");
+    printf("Content-Length: 25\n");
+    printf("Connection: close\n");
+    printf("Last-Modified: Mon, 23 Mar 2020 02:49:28 GMT\n");
+    printf("Expires: Sun, 17 Jan 2038 19:14:07 GMT\n");
+    printf("Date: %s\n\n", time_buffer);
     return -1;
   }
 
-  char header[64], time_buffer[256];
   char *content_type = get_content_type(data);
-  time_t now         = time(0);
-  struct tm tm       = *gmtime(&now);
-  strftime(time_buffer, sizeof(time_buffer), "%a, %d %b %Y %H:%M:%S %Z", &tm);
 
   FILE *filePointer = fopen(path, "rb"); // open existing binary picture
   unsigned long file_length;
@@ -65,6 +69,7 @@ int main(void)
   printf("HTTP/1.0 200 OK\n");
   printf("Content-Type: %s\n", content_type);
   printf("Content-Length: %li\n", file_length);
+  printf("Cache-Control: no-cache\n");
   printf("Connection: Keep-Alive\n");
   printf("Last-Modified: Mon, 23 Mar 2020 02:49:28 GMT\n");
   printf("Expires: Sun, 17 Jan 2038 19:14:07 GMT\n");

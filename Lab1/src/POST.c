@@ -31,9 +31,9 @@ int main(void)
 
   printf("<HTML>");
   printf("<H1>POST: Add two words together!</H1>");
-  printf("<FORM ACTION=http://localhost:8080/test.cgi METHOD=POST>");
-  printf("First Word: <INPUT NAME=First Word>");
-  printf("Second word: <INPUT NAME=Second word>");
+  printf("<FORM ACTION=http://localhost:8080/POST.cgi METHOD=POST>");
+  printf("First Word: <INPUT NAME=First>");
+  printf("Second word: <INPUT NAME=Second>");
   printf("<INPUT TYPE=SUBMIT NAME=GO>");
   printf("</FORM>");
   printf("<H2>%s + %s = %s</H2>", first_word, second_word, combined_words);
