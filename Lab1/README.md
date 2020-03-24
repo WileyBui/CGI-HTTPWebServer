@@ -68,6 +68,7 @@ If the file is found, then the server sends a request back, such as
     HTTP/1.0 200 OK
     Content-Type: image/gif
     Content-Length: 1231 
+    Cache-Control: no-cache
     Connection: Keep-Alive
     Last-Modified: Mon, 23 Mar 2020 02:49:28 GMT
     Expires: Sun, 17 Jan 2038 19:14:07 GMT
