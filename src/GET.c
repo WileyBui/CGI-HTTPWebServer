@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <unistd.h>
 
 char *get_content_type(char *filename)
@@ -48,23 +49,31 @@ int main(void)
            "HTTP 404 - File not found");
     return -1;
   }
-  char header[64];
+
+  char header[64], time_buffer[256];
   char *content_type = get_content_type(data);
+  time_t now         = time(0);
+  struct tm tm       = *gmtime(&now);
+  strftime(time_buffer, sizeof(time_buffer), "%a, %d %b %Y %H:%M:%S %Z", &tm);
 
-  printf("HTTP/1.0 200 OK\r\n"
-         "Content-Type: %s\n\n",
-         content_type);
-
-  FILE *filePointer  = fopen(path, "rb"); // open existing binary picture
+  FILE *filePointer = fopen(path, "rb"); // open existing binary picture
   unsigned long file_length;
 
   fseek(filePointer, 0, SEEK_END);
-  file_length = ftell(filePointer); // get the exact size of the pic
+  file_length = ftell(filePointer); // get the exact size of the file
+
+  printf("HTTP/1.0 200 OK\n");
+  printf("Content-Type: %s\n", content_type);
+  printf("Content-Length: %li\n", file_length);
+  printf("Connection: Keep-Alive\n");
+  printf("Last-Modified: Mon, 23 Mar 2020 02:49:28 GMT\n");
+  printf("Expires: Sun, 17 Jan 2038 19:14:07 GMT\n");
+  printf("Date: %s\n\n", time_buffer);
+
   fseek(filePointer, 0, SEEK_SET);
 
   for (unsigned long i = 0; i < file_length; i++)
     printf("%c", fgetc(filePointer)); // read each byte and print it out
-    
 
   fclose(filePointer);
   return 0;

@@ -22,7 +22,7 @@ Additionally, the server should be efficient in regards to speed and resource al
 
 - __*/src -*__ This is where all of our source code resides. This is essentially the folder where the server is located.
 
-- __*index.html -*__ Starting file
+- __*index.html -*__ Webserver directory index
 
 ### Set-up & Usability
 - To compile the GET and POST CGI, change to the `/src` directory. Compile the C file. This can be done by `gcc POST.c -o ../cgi-bin/POST.cgi && gcc GET.c -o ../cgi-bin/GET.cgi`.
@@ -43,9 +43,7 @@ Before we begin, it is important to note that when the server sends a message to
 
 This is sending an error back the HTTP client because the requested file can't be found. Other forms use a "200 OK", instead of "404 Not Found", but otherwise hold the same form. You edit the second line based on what content you're sending. You can then send data after two new lines.
 
-When a client requests for a file, the server receives a GET request. The server then sends the request to the CGI (Common Gateway Interface). The goal of using CGI is for dynamic web interactions, such as a form, by adding backend applications that take data (inputs) from an HTML form. Another type of request is a POST. This is when the client sends data to the server. We'll provide an example of each. 
-
-
+When a client requests for a file, the server receives a GET request. Each request may have many iterative calls to the server for addition files, such as the `index.html` request to call for other images. The server then sends the request to the CGI (Common Gateway Interface). The goal of using CGI is for dynamic web interactions, such as a form, by adding backend applications that take data (inputs) from an HTML form. Another type of request is a POST. This is when the client sends data to the server. We'll provide an example of each.
 
 
 __*POST Example:*__
@@ -54,12 +52,17 @@ If you go to "http://localhost:8080/form.htm", you can send a POST message to th
 __*GET Example:*__
 This is when the client is trying to get a file from the server. This happens frequently, especially when the <index.htm> file is requested. CGI tries to find the file, if it can't then it sends the 404 Not Found error, found above, to the client.
 
+If the file is found, then the server sends a request back, such as
 ```
-If the file is found, then we'd send something back like : 
-   "HTTP/1.0 200 OK\r\n"
-   "Content-Type: text/html\n\n"
+    HTTP/1.0 200 OK
+    Content-Type: image/gif
+    Content-Length: 1231 
+    Connection: Keep-Alive
+    Last-Modified: Mon, 23 Mar 2020 02:49:28 GMT
+    Expires: Sun, 17 Jan 2038 19:14:07 GMT
+    Date: Mon, 23 Mar 2020 04:49:28 GMT
    
-   CONTENT
+    CONTENT
 ```
 
 The CONTENT would be replaced by the contents of the file. The browser would then display this content. That's how CGI handles GET requests.
