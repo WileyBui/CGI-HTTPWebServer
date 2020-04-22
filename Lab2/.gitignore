@@ -1,2 +1,2 @@
-!logs/.keep
-logs/*
+/logs/*
+!/logs/.keep
