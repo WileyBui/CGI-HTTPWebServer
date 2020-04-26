@@ -1,0 +1,76 @@
+<html>
+
+<head>
+  <title>Banking System Login</title>
+</head>
+
+<body>
+  <center>
+    <h1><u>Banking System <div style="color: black">Login Page</div></u></h1>
+    <h3>Please login or sign up an account below</h3>
+
+    <form method=POST action="AccountBalances">
+      <table>
+        <tr>
+          <td><strong>Username</strong></td>
+          <td><input type="text" name="login-username" placeholder="Your username..." size=30></td>
+        </tr>
+      </table>
+      <a href="signup.htm"><input type="button" value="Sign Up"></td></a>
+      <input type="submit" value="Submit"></td>
+    </form>
+  </center>
+</body>
+
+<style>
+  body {
+    background: linear-gradient(to right, #66a6ff, #90f2f9);
+    margin-top: 25vh;
+  }
+
+  h1 u {
+    color: #e62739;
+  }
+
+  input[type=text] {
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+  }
+
+  input[type=submit],
+  input[type=button] {
+    background-color: #87a7fd;
+    color: white;
+    padding: 9px 55px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 10px;
+    margin-right: 10px;
+    border: 0.5px solid white;
+  }
+
+  input[type=button] {
+    background-color: #ff7381;
+  }
+
+  input[type=submit]:hover,
+  input[type=button]:hover {
+    background-color: transparent;
+  }
+
+  input:focus {
+    outline: none;
+  }
+
+  form {
+    margin-top: 10vh;
+  }
+
+  table {
+    padding-bottom: 3vh;
+  }
+</style>
+
+</html>
