@@ -1,34 +1,38 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
-                      http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
-  version="4.0"
-  metadata-complete="true">
+<?xml version="1.0" encoding="UTF-8" ?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+                      http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd" version="4.0" metadata-complete="true">
 
-    <description>Banking</description>
-    <display-name>Banking</display-name>
+  <description>Banking</description>
+  <display-name>Banking</display-name>
 
-    <request-character-encoding>UTF-8</request-character-encoding>
+  <request-character-encoding>UTF-8</request-character-encoding>
 
 
-    <!-- Define servlets that are included in the example application -->
-    <servlet>
-      <servlet-name>AccountHistory</servlet-name>
-      <servlet-class>AccountHistory</servlet-class>
-    </servlet>
-    <servlet>
-      <servlet-name>AccountBalances</servlet-name>
-      <servlet-class>AccountBalances</servlet-class>
-    </servlet>
+  <!-- Define servlets that are included in the example application -->
+  <servlet>
+    <servlet-name>AccountHistory</servlet-name>
+    <servlet-class>AccountHistory</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>AccountBalances</servlet-name>
+    <servlet-class>AccountBalances</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>CreateAccount</servlet-name>
+    <servlet-class>CreateAccount</servlet-class>
+  </servlet>
 
-    <servlet-mapping>
-        <servlet-name>AccountHistory</servlet-name>
-        <url-pattern>/AccountHistory</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AccountBalances</servlet-name>
-        <url-pattern>/AccountBalances</url-pattern>
-    </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>AccountHistory</servlet-name>
+    <url-pattern>/AccountHistory</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>AccountBalances</servlet-name>
+    <url-pattern>/AccountBalances</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>CreateAccount</servlet-name>
+    <url-pattern>/CreateAccount</url-pattern>
+  </servlet-mapping>
 
 </web-app>

@@ -8,7 +8,8 @@ public class AccountBalances extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
         String username = request.getParameter("username");
         HttpSession session = request.getSession(true);
 
@@ -73,7 +74,8 @@ public class AccountBalances extends HttpServlet {
     }
 
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
         doPost(request, response);
     }
 
