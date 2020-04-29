@@ -61,7 +61,7 @@ public class CreateAccount extends HttpServlet {
             }
             out.println("</ul>");
         } else {
-            File        databaseFile = new File("database.txt");
+            File        databaseFile = new File("../webapps/banking/database.txt");
             UserAccount newAccount   = new UserAccount(username, accountType, initialAmount);
             if (databaseFile.length() == 0) {
                 ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(databaseFile, true));
@@ -73,11 +73,15 @@ public class CreateAccount extends HttpServlet {
                 outputStream.close();
             }
 
+            Logs log = new Logs();
+            log.appendToLog(username, "SUCCESS: ACCOUNT CREATED with " + newAccount.getBalanceString() + " to " + accountType);
+
             out.println("<h3>Successfully created " + username + "!</h3>");
             out.println("<h4>Your account type: " + accountType + "</h4>");
-            out.println("<h4>Your initial deposit: $" + String.format("%.2f", initialAmount) + "</h4>");
+            out.println("<h4>Your initial deposit: " + newAccount.getBalanceString() + "</h4>");
             out.println("<h4 color='red'><a href='CloseAccount'>CLOSE ACCOUNT</a></h4>");
         }
+
         out.println("</body>");
         out.println("<style>.error { color: red }</style>");
         out.println("</head>");

@@ -4,11 +4,10 @@ import java.util.*;
 public class Database implements Serializable {
     private static final long serialVersionUID = -299482035708790407L;
 
-    public Database() {
-    }
+    public Database() {}
 
     public List<UserAccount> getAllUserObjects() {
-        File              database    = new File("database.txt");
+        File              database    = new File("../webapps/banking/database.txt");
         List<UserAccount> accountList = new ArrayList<>();
 
         // CHECKING if file has already created and user already exist

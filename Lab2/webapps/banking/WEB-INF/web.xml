@@ -25,6 +25,10 @@
     <servlet-name>CloseAccount</servlet-name>
     <servlet-class>CloseAccount</servlet-class>
   </servlet>
+  <servlet>
+    <servlet-name>ALLUSERS</servlet-name>
+    <servlet-class>ALLUSERS</servlet-class>
+  </servlet>
 
   <servlet-mapping>
     <servlet-name>AccountHistory</servlet-name>
@@ -41,6 +45,10 @@
   <servlet-mapping>
     <servlet-name>CloseAccount</servlet-name>
     <url-pattern>/CloseAccount</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>ALLUSERS</servlet-name>
+    <url-pattern>/ALLUSERS</url-pattern>
   </servlet-mapping>
 
 </web-app>

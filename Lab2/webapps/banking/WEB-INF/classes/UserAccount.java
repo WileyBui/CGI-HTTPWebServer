@@ -17,19 +17,23 @@ public class UserAccount implements Serializable {
     }
 
     public String getId() {
-        return id;
+        return this.id;
     }
 
     public String getUsername() {
-        return username;
+        return this.username;
     }
 
     public String getAccountType() {
-        return accountType;
+        return this.accountType;
     }
 
     public Double getBalance() {
-        return balance;
+        return this.balance;
+    }
+
+    public String getBalanceString() {
+        return "$" + String.format("%.2f", this.balance);
     }
 
     public void setId(String id) {
@@ -42,5 +46,13 @@ public class UserAccount implements Serializable {
 
     public void setBalance(double amount) {
         this.balance = amount;
+    }
+
+    public void withdraw(double amount) {
+        this.balance -= amount;
+    }
+
+    public void deposit(double amount) {
+        this.balance += amount;
     }
 }
