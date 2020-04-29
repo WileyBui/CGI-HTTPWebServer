@@ -37,7 +37,7 @@ public class CreateAccount extends HttpServlet {
         }
 
         Database database = new Database();
-        if (!database.isUserExist(username)) {
+        if (database.isUserExist(username)) {
             errors.add("Username already exists.");
         }
 

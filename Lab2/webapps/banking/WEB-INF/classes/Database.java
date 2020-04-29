@@ -7,22 +7,11 @@ public class Database implements Serializable {
     public Database() {
     }
 
-    public boolean isUserExist(String username) {
-        List<UserAccount> accountList = this.getAllUserObjects();
-
-        for (UserAccount account : accountList) {
-            if (account.getUsername().toLowerCase().equals(username.toLowerCase())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public List<UserAccount> getAllUserObjects() {
-        File database = new File("database.txt");
+        File              database    = new File("database.txt");
+        List<UserAccount> accountList = new ArrayList<>();
 
         // CHECKING if file has already created and user already exist
-        List<UserAccount> accountList = new ArrayList<>();
         try {
             if (!database.createNewFile()) {
                 ObjectInputStream db = new ObjectInputStream(new FileInputStream(database));
@@ -37,5 +26,21 @@ public class Database implements Serializable {
             }
         } catch(IOException e) {}
         return accountList;
+    }
+
+    public UserAccount getUserObject(String username) {
+        List<UserAccount> accountList = this.getAllUserObjects();
+
+        for (UserAccount account : accountList) {
+            if (account.getUsername().toLowerCase().equals(username.toLowerCase())) {
+                return account;
+            }
+        }
+        return null;
+    }
+
+    public boolean isUserExist(String username) {
+        UserAccount user = this.getUserObject(username);
+        return (user != null)? true: false;
     }
 }
