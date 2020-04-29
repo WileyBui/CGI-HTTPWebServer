@@ -10,7 +10,7 @@ public class CreateAccount extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         PrintWriter  out     = response.getWriter();
-        HttpSession  session = request.getSession(true);
+        HttpSession  session = request.getSession();
         List<String> errors  = new ArrayList<>();
 
         // INPUTS from client side
@@ -36,29 +36,13 @@ public class CreateAccount extends HttpServlet {
             errors.add("Username must have at least 1 character.");
         }
 
-        File        database   = new File("database.txt");
-        UserAccount newAccount = new UserAccount(username, accountType, initialAmount);
-
-        // CHECKING if file has already created and user already exist
-        List<UserAccount> accountList = new ArrayList<>();
-        if (!database.createNewFile()) {
-            ObjectInputStream db = new ObjectInputStream(new FileInputStream(database));
-            while(true){
-                try {
-                    accountList.add((UserAccount)db.readObject());
-                } catch (Exception e) {
-                    db.close();
-                    break;
-                }
-            }
-            for (UserAccount account : accountList) {
-                if (account.getUsername().toLowerCase().equals(username.toLowerCase())) {
-                    errors.add("Username already exists.");
-                    break;
-                }
-            }
+        Database database = new Database();
+        if (!database.isUserExist(username)) {
+            errors.add("Username already exists.");
         }
 
+        // We now know that this user can be allocated!
+        session.setAttribute("username", username);
         response.setContentType("text/html");
         response.setCharacterEncoding("UTF-8");
         out.println("<!DOCTYPE html><html>");
@@ -77,12 +61,14 @@ public class CreateAccount extends HttpServlet {
             }
             out.println("</ul>");
         } else {
-            if (database.length() == 0) {
-                ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(database, true));
+            File        databaseFile = new File("database.txt");
+            UserAccount newAccount   = new UserAccount(username, accountType, initialAmount);
+            if (databaseFile.length() == 0) {
+                ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(databaseFile, true));
                 outputStream.writeObject(newAccount);
                 outputStream.close();
             } else {
-                AppendingObjectOutputStream outputStream = new AppendingObjectOutputStream(new FileOutputStream(database, true));
+                AppendingObjectOutputStream outputStream = new AppendingObjectOutputStream(new FileOutputStream(databaseFile, true));
                 outputStream.writeObject(newAccount);
                 outputStream.close();
             }
@@ -90,6 +76,7 @@ public class CreateAccount extends HttpServlet {
             out.println("<h3>Successfully created " + username + "!</h3>");
             out.println("<h4>Your account type: " + accountType + "</h4>");
             out.println("<h4>Your initial deposit: $" + String.format("%.2f", initialAmount) + "</h4>");
+            out.println("<h4 color='red'><a href='CloseAccount'>CLOSE ACCOUNT</a></h4>");
         }
         out.println("</body>");
         out.println("<style>.error { color: red }</style>");

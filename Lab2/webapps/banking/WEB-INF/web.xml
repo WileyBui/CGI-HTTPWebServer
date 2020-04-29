@@ -21,6 +21,10 @@
     <servlet-name>CreateAccount</servlet-name>
     <servlet-class>CreateAccount</servlet-class>
   </servlet>
+  <servlet>
+    <servlet-name>CloseAccount</servlet-name>
+    <servlet-class>CloseAccount</servlet-class>
+  </servlet>
 
   <servlet-mapping>
     <servlet-name>AccountHistory</servlet-name>
@@ -33,6 +37,10 @@
   <servlet-mapping>
     <servlet-name>CreateAccount</servlet-name>
     <url-pattern>/CreateAccount</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>CloseAccount</servlet-name>
+    <url-pattern>/CloseAccount</url-pattern>
   </servlet-mapping>
 
 </web-app>
