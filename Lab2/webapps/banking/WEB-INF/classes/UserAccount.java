@@ -1,27 +1,20 @@
 import java.io.*;
+import java.util.UUID;
 
 public class UserAccount implements Serializable {
     private static final long serialVersionUID = -299482035708790407L;
-    private String id; // TODO
-    private String username;
+    private String usernameID;
     private String accountType;
     private Double balance;
 
-    public UserAccount() {
-    }
-
-    public UserAccount(String username, String accountType, double balance) {
-        this.username    = username;
+    public UserAccount(String userID, String accountType, double balance) {
+        this.usernameID  = UUID.randomUUID().toString();
         this.accountType = accountType;
         this.balance     = balance;
     }
 
-    public String getId() {
-        return this.id;
-    }
-
-    public String getUsername() {
-        return this.username;
+    public String getUsernameID() {
+        return this.usernameID;
     }
 
     public String getAccountType() {
@@ -34,14 +27,6 @@ public class UserAccount implements Serializable {
 
     public String getBalanceString() {
         return "$" + String.format("%.2f", this.balance);
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public void setBalance(double amount) {

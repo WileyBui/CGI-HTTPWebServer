@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.*;
 
 public class CreateSubAccount implements Serializable {
     private static final long serialVersionUID = -299482035708790407L;
@@ -19,7 +20,16 @@ public class CreateSubAccount implements Serializable {
         }
     }
 
-    public boolean errorCreatingSubAccount() {
+    public boolean isErrorCreatingSubAccount() {
+        // ERROR CHECK: prevent user from doing Inspect Element from client side
+        List<String> errors = new ArrayList<>();
+        if (initialAmount < 0) {
+            errors.add("The initial deposit amount you entered is incorrect.");
+        }
+        if (!(accountType.equals("checking-account") || accountType.equals("saving-account") || accountType.equals("brokerage-account"))) {
+            errors.add("Account type must be checking, saving, or brokerage.");
+        }
+
         return true;
         // if (initialAmount < 0) {
         //     errors.add("The initial deposit amount you entered is incorrect.");

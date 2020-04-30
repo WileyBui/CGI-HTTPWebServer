@@ -12,12 +12,12 @@ public class AccountBalances extends HttpServlet {
             throws IOException, ServletException {
         
         String username = request.getParameter("login-username");
-        HttpSession session = request.getSession();
-        if (username == null) {
-            username = (String)session.getAttribute("username");
-        } else {
+        HttpSession session = request.getSession(false);
+        // if (username == null) {
+            // username = (String)session.getAttribute("username");
+        // } else {
             session.setAttribute("username", username);
-        }
+        // }
 
         response.setContentType("text/html");
         response.setCharacterEncoding("UTF-8");
@@ -27,14 +27,14 @@ public class AccountBalances extends HttpServlet {
         out.println("<head>");
         out.println("<meta charset=\"UTF-8\" />");
 
-        Database database = new Database();
+        // Database database = new Database();
         
-        if (database.isUserExist(username)) {
+        // if (database.isUserExist(username)) {
             out.println("<title>Account Summary</title>");
-        } else {
-            out.println("<title>Invalid Username</title>");
-            out.println("<meta http-equiv = \"refresh\" content = \"2; url = index.htm\" />");
-        }
+        // } else {
+            // out.println("<title>Invalid Username</title>");
+            // out.println("<meta http-equiv = \"refresh\" content = \"2; url = index.htm\" />");
+        // }
 
         out.println("</head>");
 
@@ -44,10 +44,10 @@ public class AccountBalances extends HttpServlet {
         out.println("}");
         out.println("</style>");
 
-        if (!database.isUserExist(username)) {
+        // if (!database.isUserExist(username)) {
             out.println("<h3 style='color: black'>YOUR ACCOUNT CANNOT BE AUTHENTICATED. YOU WILL BE REDIRECTED TO THE LOGIN SCREEN IN 2 SECONDS</h>");
             return;
-        }
+        // }
 
     //    BALANCE:
         String balance = database.getUserObject(username).getBalanceString();

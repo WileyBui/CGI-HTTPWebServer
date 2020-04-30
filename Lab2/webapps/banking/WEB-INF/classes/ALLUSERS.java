@@ -21,16 +21,16 @@ public class ALLUSERS extends HttpServlet {
         out.println("</head>");
         out.println("<body bgcolor=\"#DCDCDC\">");
 
-        Database database = new Database();
+        // Database database = new Database();
         // LIST OUT ALL USERS
-        List<UserAccount> accountList = database.getAllUserObjects();
+        // List<UserAccount> accountList = database.getAllUserObjects();
 
         out.println("=========================================");
         out.println("<ul>All users:</ul>");
-        for (UserAccount account : accountList) {
-            out.println("<li>" + account.getUsername() + "</li>");
-        }
-        out.println("</ul>");
+        // for (UserAccount account : accountList) {
+        //     out.println("<li>" + account.getUsername() + "</li>");
+        // }
+        // out.println("</ul>");
         // END LISTING OUT ALL USERS
 
         out.println("</body>");

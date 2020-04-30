@@ -1,14 +1,14 @@
 import java.io.*;
 import java.util.*;
 
-public class Database implements Serializable {
+public class ParentDatabase implements Serializable {
     private static final long serialVersionUID = -299482035708790407L;
 
-    public Database() {}
+    public ParentDatabase() {}
 
-    public List<UserAccount> getAllUserObjects() {
-        File              database    = new File("../webapps/banking/database.txt");
-        List<UserAccount> accountList = new ArrayList<>();
+    public List<ParentAccount> getAllUserObjects() {
+        File              database    = new File("../webapps/banking/ParentDatabase.txt");
+        List<ParentAccount> accountList = new ArrayList<>();
 
         // CHECKING if file has already created and user already exist
         try {
@@ -16,7 +16,7 @@ public class Database implements Serializable {
                 ObjectInputStream db = new ObjectInputStream(new FileInputStream(database));
                 while(true){
                     try {
-                        accountList.add((UserAccount)db.readObject());
+                        accountList.add((ParentAccount)db.readObject());
                     } catch (Exception e) {
                         db.close();
                         break;
@@ -27,10 +27,10 @@ public class Database implements Serializable {
         return accountList;
     }
 
-    public UserAccount getUserObject(String usernameID) {
-        List<UserAccount> accountList = this.getAllUserObjects();
+    public ParentAccount getParentObject(String usernameID) {
+        List<ParentAccount> accountList = this.getAllUserObjects();
 
-        for (UserAccount account : accountList) {
+        for (ParentAccount account : accountList) {
             if (account.getUsernameID().toLowerCase().equals(usernameID.toLowerCase())) {
                 return account;
             }
@@ -38,8 +38,8 @@ public class Database implements Serializable {
         return null;
     }
 
-    public boolean isUserExist(String username) {
-        UserAccount user = this.getUserObject(username);
+    public boolean isParentExist(String username) {
+        ParentAccount user = this.getParentObject(username);
         return (user != null)? true: false;
     }
 }

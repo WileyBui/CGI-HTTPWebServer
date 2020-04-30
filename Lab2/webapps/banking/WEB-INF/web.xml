@@ -18,8 +18,8 @@
     <servlet-class>AccountBalances</servlet-class>
   </servlet>
   <servlet>
-    <servlet-name>CreateAccount</servlet-name>
-    <servlet-class>CreateAccount</servlet-class>
+    <servlet-name>CreateParentAccount</servlet-name>
+    <servlet-class>CreateParentAccount</servlet-class>
   </servlet>
   <servlet>
     <servlet-name>CloseAccount</servlet-name>
@@ -47,8 +47,8 @@
     <url-pattern>/AccountBalances</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-    <servlet-name>CreateAccount</servlet-name>
-    <url-pattern>/CreateAccount</url-pattern>
+    <servlet-name>CreateParentAccount</servlet-name>
+    <url-pattern>/CreateParentAccount</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>CloseAccount</servlet-name>
