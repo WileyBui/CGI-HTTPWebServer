@@ -10,8 +10,9 @@ public class AccountBalances extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
-        String username = request.getParameter("username");
+        String username = request.getParameter("login-username");
         HttpSession session = request.getSession(true);
+        session.setAttribute("username", username);
 
         response.setContentType("text/html");
         response.setCharacterEncoding("UTF-8");
@@ -21,56 +22,38 @@ public class AccountBalances extends HttpServlet {
         out.println("<head>");
         out.println("<meta charset=\"UTF-8\" />");
 
-        out.println("<title>test</title>");
-        out.println("</head>");
-        out.println("<body bgcolor=\"white\">");
-
-        // img stuff not req'd for source code html showing
-        // relative links everywhere!
-
-        // XXX
-        // making these absolute till we work out the
-        // addition of a PathInfo issue
-
-        out.println("<h3>Welcome, " + username + "</h3>");
-
-        out.println(new Date(session.getLastAccessedTime()));
-
-        String dataName = request.getParameter("dataname");
-        String dataValue = request.getParameter("datavalue");
-        if (dataName != null && dataValue != null) {
-            session.setAttribute(dataName, dataValue);
+        Database database = new Database();
+        
+        if (database.isUserExist(username)) {
+            out.println("<title>Account Summary</title>");
+        } else {
+            out.println("<title>Invalid Username</title>");
+            out.println("<meta http-equiv = \"refresh\" content = \"2; url = index.htm\" />");
         }
 
-        out.println("<P>");
-        Enumeration<String> names = session.getAttributeNames();
+        out.println("</head>");
 
-        out.println("<P>");
-        out.print("<form action=\"");
-        out.print(response.encodeURL("SessionExample"));
-        out.print("\" ");
-        out.println("method=POST>");
-        out.println("<input type=text size=20 name=dataname>");
-        out.println("<br>");
-        out.println("<input type=text size=20 name=datavalue>");
-        out.println("<br>");
-        out.println("<input type=submit>");
-        out.println("</form>");
+        out.println("<style>");
+        out.println("body {");
+        out.println("background: linear-gradient(to right, #66a6ff, #90f2f9);");
+        out.println("}");
+        out.println("</style>");
 
-        out.println("<P>GET based form:<br>");
-        out.print("<form action=\"");
-        out.print(response.encodeURL("SessionExample"));
-        out.print("\" ");
-        out.println("method=GET>");
-        out.println("<input type=text size=20 name=dataname>");
-        out.println("<br>");
-        out.println("<input type=text size=20 name=datavalue>");
-        out.println("<br>");
-        out.println("<input type=submit>");
-        out.println("</form>");
+        if (!database.isUserExist(username)) {
+            out.println("<h3 style='color: black'>YOUR ACCOUNT CANNOT BE AUTHENTICATED. YOU WILL BE REDIRECTED TO THE LOGIN SCREEN IN 2 SECONDS</h>");
+            return;
+        }
 
-        out.println("</body>");
-        out.println("</html>");
+    //    BALANCE:
+        String balance = database.getUserObject(username).getBalanceString();
+
+        out.println("<h3>Welcome to your account, " + username + "</h3>");
+        out.println("<br></br>");
+        //out.println("Current time : " + new Date(session.getLastAccessedTime()));
+        out.println("<h3>Your current balance: " + balance + "</h3>");
+        out.println("<h4 color='red'><a href='Withdraw'>Withdraw</a></h4>");
+
+
     }
 
     @Override

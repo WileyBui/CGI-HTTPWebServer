@@ -29,6 +29,14 @@
     <servlet-name>ALLUSERS</servlet-name>
     <servlet-class>ALLUSERS</servlet-class>
   </servlet>
+    <servlet>
+    <servlet-name>Withdraw</servlet-name>
+    <servlet-class>Withdraw</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>WithdrawProcessor</servlet-name>
+    <servlet-class>WithdrawProcessor</servlet-class>
+  </servlet>
 
   <servlet-mapping>
     <servlet-name>AccountHistory</servlet-name>
@@ -49,6 +57,14 @@
   <servlet-mapping>
     <servlet-name>ALLUSERS</servlet-name>
     <url-pattern>/ALLUSERS</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>Withdraw</servlet-name>
+    <url-pattern>/Withdraw</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>WithdrawProcessor</servlet-name>
+    <url-pattern>/WithdrawProcessor</url-pattern>
   </servlet-mapping>
 
 </web-app>

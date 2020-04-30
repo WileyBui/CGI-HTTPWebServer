@@ -27,7 +27,7 @@ public class CloseAccount extends HttpServlet {
         Logs log = new Logs();
         if (currentUserObject.getBalance() > 0) {
             out.println("<p class='error'>You must withdraw your money in order to close your account.</p>");
-            out.println("<p><a href='WithdrawMoney'>Withdraw Money</a></p>");
+            out.println("<p><a href='Withdraw'>Withdraw Money</a></p>");
             log.appendToLog(username, "UNSUCCESS: ACCOUNT CLOSURE. Must withdraw " + currentUserObject.getBalanceString());
         } else {
             out.println("<p>TODO: You have successfully closed your account.</p>");
