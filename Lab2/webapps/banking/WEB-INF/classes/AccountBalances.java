@@ -10,9 +10,14 @@ public class AccountBalances extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
+        
         String username = request.getParameter("login-username");
-        HttpSession session = request.getSession(true);
-        session.setAttribute("username", username);
+        HttpSession session = request.getSession();
+        if (username == null) {
+            username = (String)session.getAttribute("username");
+        } else {
+            session.setAttribute("username", username);
+        }
 
         response.setContentType("text/html");
         response.setCharacterEncoding("UTF-8");

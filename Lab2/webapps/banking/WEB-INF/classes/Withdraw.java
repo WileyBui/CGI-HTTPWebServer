@@ -11,7 +11,6 @@ public class Withdraw extends HttpServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         PrintWriter out     = response.getWriter();
         HttpSession session = request.getSession(false);
-        session.setAttribute("username", username);
 
         String username = (String)session.getAttribute("username");
 
