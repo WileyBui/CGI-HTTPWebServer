@@ -7,7 +7,7 @@ public class Database implements Serializable {
     public Database() {}
 
     public List<UserAccount> getAllUserObjects() {
-        File              database    = new File("../webapps/banking/database.txt");
+        File              database    = new File("../webapps/banking/SubAccountDatabase.txt");
         List<UserAccount> accountList = new ArrayList<>();
 
         // CHECKING if file has already created and user already exist

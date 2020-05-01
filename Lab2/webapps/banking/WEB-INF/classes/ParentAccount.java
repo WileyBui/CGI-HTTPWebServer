@@ -20,6 +20,10 @@ public class ParentAccount implements Serializable {
         return this.usernameID;
     }
 
+    public List<UserAccount> getSubAccounts() {
+        return this.subAccountList;
+    }
+    
     public void setUsername(String username) {
         this.username = username;
     }
@@ -31,4 +35,5 @@ public class ParentAccount implements Serializable {
     public void addSubAccount(UserAccount newAccount) {
         this.subAccountList.add(newAccount);
     }
+
 }

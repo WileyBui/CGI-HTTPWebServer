@@ -21,16 +21,30 @@ public class ALLUSERS extends HttpServlet {
         out.println("</head>");
         out.println("<body bgcolor=\"#DCDCDC\">");
 
-        // Database database = new Database();
         // LIST OUT ALL USERS
-        // List<UserAccount> accountList = database.getAllUserObjects();
+        ParentDatabase database = new ParentDatabase();
+        List<ParentAccount> accountList = database.getAllParentObjects();
 
+        out.println("<h3>All users:</h3>");
         out.println("=========================================");
-        out.println("<ul>All users:</ul>");
-        // for (UserAccount account : accountList) {
-        //     out.println("<li>" + account.getUsername() + "</li>");
-        // }
-        // out.println("</ul>");
+        out.println("<table>");
+        out.println("<tr><th>Username</th>");
+        out.println("<th>UsernameID</th>");
+        out.println("<th>Account(s)</th></tr>");
+
+        for (ParentAccount account : accountList) {
+            List<UserAccount> subAccountsFromParent = account.getSubAccounts();
+            out.println("<tr>");
+            out.println("<td>" + account.getUsername() + "</td>");
+            out.println("<td>" + account.getUsernameID() + "</td>");
+            out.println("<td><ul>");
+            for (UserAccount subAccount : subAccountsFromParent) {
+                out.println("<li><strong>" + subAccount.getAccountType() + "</strong> ");
+                out.println(subAccount.getBalanceString() + "</li>");
+            }
+            out.println("</tr>");
+        }
+        out.println("</ul>");
         // END LISTING OUT ALL USERS
 
         out.println("</body>");

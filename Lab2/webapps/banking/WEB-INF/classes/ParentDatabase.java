@@ -6,8 +6,8 @@ public class ParentDatabase implements Serializable {
 
     public ParentDatabase() {}
 
-    public List<ParentAccount> getAllUserObjects() {
-        File              database    = new File("../webapps/banking/ParentDatabase.txt");
+    public List<ParentAccount> getAllParentObjects() {
+        File                database    = new File("../webapps/banking/ParentDatabase.txt");
         List<ParentAccount> accountList = new ArrayList<>();
 
         // CHECKING if file has already created and user already exist
@@ -27,11 +27,11 @@ public class ParentDatabase implements Serializable {
         return accountList;
     }
 
-    public ParentAccount getParentObject(String usernameID) {
-        List<ParentAccount> accountList = this.getAllUserObjects();
+    public ParentAccount getParentObject(String username) {
+        List<ParentAccount> accountList = this.getAllParentObjects();
 
         for (ParentAccount account : accountList) {
-            if (account.getUsernameID().toLowerCase().equals(usernameID.toLowerCase())) {
+            if (account.getUsername().toLowerCase().equals(username.toLowerCase())) {
                 return account;
             }
         }

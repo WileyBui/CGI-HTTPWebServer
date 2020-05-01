@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.UUID;
 
-public class UserAccount implements Serializable {
+public class UserAccount<T> implements Serializable {
     private static final long serialVersionUID = -299482035708790407L;
     private String usernameID;
     private String accountType;
@@ -11,6 +11,17 @@ public class UserAccount implements Serializable {
         this.usernameID  = UUID.randomUUID().toString();
         this.accountType = accountType;
         this.balance     = balance;
+    }
+
+    public UserAccount(String userID, String accountType, String balance) {
+        this.usernameID  = UUID.randomUUID().toString();
+        this.accountType = accountType;
+
+        try { 
+            this.balance = Double.parseDouble(balance);
+        } catch (NumberFormatException e) {
+            this.balance = -1.0;
+        }
     }
 
     public String getUsernameID() {
