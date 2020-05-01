@@ -11,8 +11,8 @@ public class AccountBalances extends HttpServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         
-        String username = request.getParameter("login-username");
-        HttpSession session = request.getSession();
+        String      username = request.getParameter("login-username");
+        HttpSession session  = request.getSession();
         if (username == null) {
             username = (String)session.getAttribute("username");
         } else {
@@ -56,6 +56,7 @@ public class AccountBalances extends HttpServlet {
         //out.println("Current time : " + new Date(session.getLastAccessedTime()));
         List<UserAccount> listOfSubAccounts = database.getParentObject(username).getSubAccounts();
 
+        out.println("<button><a href='CreateSubAccount'>Open a new account</a></button>");
         out.println("<table>");
         out.println("<tr>");
         out.println("<th>Account Type</th>");
@@ -70,7 +71,10 @@ public class AccountBalances extends HttpServlet {
             out.println("</tr>");
         }
         out.println("</body>");
-        out.println("<style>table, th, td { border: 1px solid black; } </style>");
+        out.println("<style>table, th, td { border: 1px solid black; } button:hover {background-color: transparent;}");
+        out.println("a { text-decoration: none; color: white; }");
+        out.println("button {border: none; border-radius: 5px; padding: 10px; background-color: #004e8a; border: 0.5px solid white; }");
+        out.println("</style>");
         out.println("</html>");
     }
 
