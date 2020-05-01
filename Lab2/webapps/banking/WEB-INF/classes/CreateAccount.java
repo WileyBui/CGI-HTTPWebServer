@@ -79,7 +79,8 @@ public class CreateAccount extends HttpServlet {
             out.println("<h3>Successfully created " + username + "!</h3>");
             out.println("<h4>Your account type: " + accountType + "</h4>");
             out.println("<h4>Your initial deposit: " + newAccount.getBalanceString() + "</h4>");
-            out.println("<h4 color='red'><a href='CloseAccount'>CLOSE ACCOUNT</a></h4>");
+            out.println("<h4 color='red'><a href='CloseAccount'>Close Account</a></h4>");
+            out.println("<h4 color='red'><a href='AccountBalances'>Account Balance Page</a></h4>");
         }
 
         out.println("</body>");

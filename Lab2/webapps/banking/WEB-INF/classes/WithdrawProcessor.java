@@ -27,14 +27,53 @@ public class WithdrawProcessor extends HttpServlet {
 
         Double withdrawAmount = Double.parseDouble(request.getParameter("withdraw-amount"));
         Double currentAmount = currentUserObject.getBalance();
+        Double newAmount = currentAmount-withdrawAmount;
 
         if(withdrawAmount > currentAmount) {
           out.println("<h1>Withdraw Failed. You tried to withdraw more than you have</h1>");
           out.println("<p><a href='AccountBalances'>Return to Account Summary</a></p>");
         } else {
-          Double updatedAmount = currentAmount-withdrawAmount;
-          currentUserObject.withdraw(withdrawAmount);
-          out.println("<h1>Withdraw Successful. Your new balance is: " + currentUserObject.getBalanceString() + "</h1>");
+          String oldFileName = "../webapps/banking/database.txt";
+          String tmpFileName = "../webapps/banking/tmp_database.txt";
+          
+          //File              databaseFile = new File("../webapps/banking/database.txt");
+          //ObjectInputStream objInput     = new ObjectInputStream(new FileInputStream(databaseFile));
+
+          ObjectInputStream objInput = new ObjectInputStream(new FileInputStream(new File(oldFileName)));
+          ObjectOutputStream objOutput = new ObjectOutputStream(new FileOutputStream(new File(tmpFileName)));
+
+
+          try {
+            Object obj = objInput.readObject();
+
+            while (obj != null) {
+              if(obj instanceof UserAccount) {
+                UserAccount retrievedAccount = (UserAccount) obj;
+                //out.println(retrievedAccount.getUsername());
+                if(username.equals(retrievedAccount.getUsername())) {
+                  retrievedAccount.withdraw(withdrawAmount);
+                }
+                objOutput.writeObject(retrievedAccount);
+                objOutput.flush();
+              }
+              obj = objInput.readObject();
+            }
+
+          } catch (Exception e) {    
+          }
+
+          objInput.close();
+          objOutput.close();
+
+          //once everything is complete, delete old file
+          File oldFile = new File(oldFileName);
+          oldFile.delete();
+
+          //and rename tmp file's name to old file name
+          File newFile = new File(tmpFileName);
+          newFile.renameTo(oldFile);
+
+          out.println("<h2>You successfully withdrew " + Double.toString(withdrawAmount) + ". Your new balance is: " + Double.toString(newAmount) + "</h2>");
           out.println("<p><a href='AccountBalances'>Return to Account Summary</a></p>");
         }
     }

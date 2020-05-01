@@ -53,8 +53,6 @@ public class AccountBalances extends HttpServlet {
         String balance = database.getUserObject(username).getBalanceString();
 
         out.println("<h3>Welcome to your account, " + username + "</h3>");
-        out.println("<br></br>");
-        //out.println("Current time : " + new Date(session.getLastAccessedTime()));
         out.println("<h3>Your current balance: " + balance + "</h3>");
         out.println("<h4 color='red'><a href='Withdraw'>Withdraw</a></h4>");
 
