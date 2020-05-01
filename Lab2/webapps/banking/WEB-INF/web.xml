@@ -22,6 +22,14 @@
     <servlet-class>CreateParentAccount</servlet-class>
   </servlet>
   <servlet>
+    <servlet-name>CreateSubAccountProcessor</servlet-name>
+    <servlet-class>CreateSubAccountProcessor</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>CreateSubAccount</servlet-name>
+    <servlet-class>CreateSubAccount</servlet-class>
+  </servlet>
+  <servlet>
     <servlet-name>CloseAccount</servlet-name>
     <servlet-class>CloseAccount</servlet-class>
   </servlet>
@@ -49,6 +57,14 @@
   <servlet-mapping>
     <servlet-name>CreateParentAccount</servlet-name>
     <url-pattern>/CreateParentAccount</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>CreateSubAccountProcessor</servlet-name>
+    <url-pattern>/CreateSubAccountProcessor</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>CreateSubAccount</servlet-name>
+    <url-pattern>/CreateSubAccount</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>CloseAccount</servlet-name>

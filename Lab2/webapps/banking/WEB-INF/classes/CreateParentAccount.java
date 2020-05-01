@@ -35,7 +35,7 @@ public class CreateParentAccount extends HttpServlet {
         out.println("<center>");
         if (isParentExist) {
             out.println("<h3 class='error'>Unable to create " + username + " account: Username already exists.</h3>");
-            out.println("<h4><a href='signup.htm'>Click to go back to Sign Up page</a></h4>");
+            out.println("<h4><a href='signup.htm'>Click here to go back to Sign Up page</a></h4>");
         } else {
             // creating a parent account
             File          databaseFile     = new File("../webapps/banking/ParentDatabase.txt");

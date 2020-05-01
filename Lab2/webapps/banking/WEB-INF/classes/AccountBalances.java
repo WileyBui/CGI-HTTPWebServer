@@ -19,21 +19,23 @@ public class AccountBalances extends HttpServlet {
             session.setAttribute("username", username);
         }
 
+        
         response.setContentType("text/html");
         response.setCharacterEncoding("UTF-8");
-
+        
         PrintWriter out = response.getWriter();
         out.println("<!DOCTYPE html><html>");
         out.println("<head>");
         out.println("<meta charset=\"UTF-8\" />");
-
+        
         ParentDatabase database = new ParentDatabase();
+        session.setAttribute("usernameID", database.getParentID(username));
         
         if (database.isParentExist(username)) {
             out.println("<title>Account Summary</title>");
         } else {
             out.println("<title>Invalid Username</title>");
-            out.println("<meta http-equiv = \"refresh\" content = \"2; url = index.htm\" />");
+            out.println("<meta http-equiv = 'refresh' content = '2; url = index.htm' />");
         }
 
         out.println("</head>");
@@ -56,7 +58,7 @@ public class AccountBalances extends HttpServlet {
         //out.println("Current time : " + new Date(session.getLastAccessedTime()));
         List<UserAccount> listOfSubAccounts = database.getParentObject(username).getSubAccounts();
 
-        out.println("<button><a href='CreateSubAccount'>Open a new account</a></button>");
+        out.println("<button onclick=\"location.href = 'CreateSubAccount';\"'>Open a new account</a></button>");
         out.println("<table>");
         out.println("<tr>");
         out.println("<th>Account Type</th>");
@@ -72,8 +74,8 @@ public class AccountBalances extends HttpServlet {
         }
         out.println("</body>");
         out.println("<style>table, th, td { border: 1px solid black; } button:hover {background-color: transparent;}");
-        out.println("a { text-decoration: none; color: white; }");
-        out.println("button {border: none; border-radius: 5px; padding: 10px; background-color: #004e8a; border: 0.5px solid white; }");
+        out.println("button { color: white; border: none; border-radius: 5px; padding: 10px; background-color: #004e8a; border: 0.5px solid white; }");
+        out.println("button:hover{ cursor:pointer }");
         out.println("</style>");
         out.println("</html>");
     }

@@ -38,6 +38,22 @@ public class ParentDatabase implements Serializable {
         return null;
     }
 
+    public ParentAccount getParentObjectByUsernameID(String usernameID) {
+        List<ParentAccount> accountList = this.getAllParentObjects();
+
+        for (ParentAccount account : accountList) {
+            if (account.getUsernameID().equals(usernameID)) {
+                return account;
+            }
+        }
+        return null;
+    }
+
+    public String getParentID(String username) {
+        ParentAccount user = this.getParentObject(username);
+        return user.getUsernameID();
+    }
+
     public boolean isParentExist(String username) {
         ParentAccount user = this.getParentObject(username);
         return (user != null)? true: false;
