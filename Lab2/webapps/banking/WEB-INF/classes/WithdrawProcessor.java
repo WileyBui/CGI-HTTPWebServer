@@ -43,15 +43,4 @@ public class WithdrawProcessor extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         doPost(request, response);
     }
-
-    public class AppendingObjectOutputStream extends ObjectOutputStream {
-        public AppendingObjectOutputStream(OutputStream out) throws IOException {
-          super(out);
-        }
-      
-        @Override
-        protected void writeStreamHeader() throws IOException {
-          reset();
-        }
-    }
 }

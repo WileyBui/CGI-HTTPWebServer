@@ -49,7 +49,7 @@ public class ALLUSERS extends HttpServlet {
 
         out.println("</body>");
         out.println("<style>.error { color: red }</style>");
-        out.println("</head>");
+        out.println("</html>");
     }
 
     @Override

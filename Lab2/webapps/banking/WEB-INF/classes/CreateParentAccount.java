@@ -17,6 +17,7 @@ public class CreateParentAccount extends HttpServlet {
         String         username       = request.getParameter("username");
         String         accountType    = request.getParameter("account-type");
         ParentDatabase parentDatabase = new ParentDatabase();
+        boolean        isParentExist  = parentDatabase.isParentExist(username);
 
         // We now know that this user can be allocated!
         session.setAttribute("username", username);
@@ -25,12 +26,16 @@ public class CreateParentAccount extends HttpServlet {
         out.println("<!DOCTYPE html><html>");
         out.println("<head>");
         out.println("<meta charset=\"UTF-8\" />");
-        out.println("<title>Sign Up: " + (parentDatabase.isParentExist(username)? "Error" : "Success") + "!</title>");
+        out.println("<title>Sign Up: " + (isParentExist? "Error" : "Success") + "!</title>");
+        if (!isParentExist) {
+            out.println("<meta http-equiv = 'refresh' content = \"3; url = AccountBalances\" />");
+        }
         out.println("</head>");
         out.println("<body bgcolor=\"#DCDCDC\">");
-        
-        if (parentDatabase.isParentExist(username)) {
-            out.println("<h3>Unable to create " + username + " account: Username already exists.</h3>");
+        out.println("<center>");
+        if (isParentExist) {
+            out.println("<h3 class='error'>Unable to create " + username + " account: Username already exists.</h3>");
+            out.println("<h4><a href='signup.htm'>Click to go back to Sign Up page</a></h4>");
         } else {
             // creating a parent account
             File          databaseFile     = new File("../webapps/banking/ParentDatabase.txt");
@@ -53,15 +58,13 @@ public class CreateParentAccount extends HttpServlet {
             // Logs log = new Logs();
             // log.appendToLog(username, "SUCCESS: ACCOUNT CREATED with " + newParentAccount.getBalanceString() + " to " + accountType);
     
-            out.println("<h3>Successfully created " + username + "!</h3>");
-            // out.println("<h4>Your account type: " + accountType + "</h4>");
-            // out.println("<h4>Your initial deposit: " + newParentAccount.getBalanceString() + "</h4>");
-            out.println("<h4 color='red'><a href='CloseAccount'>CLOSE ACCOUNT</a></h4>");
+            out.println("<h2 class='success'>Successfully created " + username + "!</h2>");
+            out.println("<h4>Redirecting to Home page after 3 seconds...</h4>");
         }
-
+        out.println("</center>");
         out.println("</body>");
-        out.println("<style>.error { color: red }</style>");
-        out.println("</head>");
+        out.println("<style>.error { color: red; } .success { color: #6cc070; }</style>");
+        out.println("</html>");
     }
 
     @Override
