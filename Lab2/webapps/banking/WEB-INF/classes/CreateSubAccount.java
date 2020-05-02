@@ -30,7 +30,7 @@ public class CreateSubAccount extends HttpServlet {
         out.println("</head>");
         out.println("<body>");
         out.println("  <center>");
-        out.println("    <h1><u style='color: #e62739'>Opening an Account for Wiley</u></h1>");
+        out.println("    <h1><u style='color: #e62739'>Opening an Account</u></h1>");
         out.println("    <form method=POST action='CreateSubAccountProcessor'>");
         out.println("      <table>");
         out.println("        <tr>");
