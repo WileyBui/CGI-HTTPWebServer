@@ -9,13 +9,11 @@ public class CreateSubAccountProcessor extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        PrintWriter out     = response.getWriter();
-        HttpSession session = request.getSession();
-
-
-        String usernameID    = (String)session.getAttribute("usernameID");
-        String accountType   = (String)request.getParameter("new-subaccount-type");
-        String initialAmount = (String)request.getParameter("new-subaccount-initial-deposit");
+        PrintWriter out           = response.getWriter();
+        HttpSession session       = request.getSession();
+        String      usernameID    = (String)session.getAttribute("usernameID");
+        String      accountType   = (String)request.getParameter("new-subaccount-type");
+        String      initialAmount = (String)request.getParameter("new-subaccount-initial-deposit");
         
         // Adds a new subaccount to the parent account
         ParentAccount parentAccount   = new ParentDatabase().getParentObjectByUsernameID(usernameID);
@@ -48,7 +46,7 @@ public class CreateSubAccountProcessor extends HttpServlet {
                     // Writes the modified parent
                     outputStream.writeObject(parentAccount);
                 } else {
-                    // Rewrites existing parents
+                    // Rewrites existing parent(s)
                     outputStream.writeObject(parentObject);
                 }
             }
@@ -69,13 +67,16 @@ public class CreateSubAccountProcessor extends HttpServlet {
         out.println("</head>");
         out.println("<body bgcolor='#DCDCDC'>");
         out.println("<center>");
-        out.println("<h2 class='success'>Successfully created a " + accountType + " account with $" + initialAmount + "!</h2>");
-        out.println("<h4>Redirecting to Home page after 3 seconds...</h4>");
+        out.println("<h2 class='success'>Successfully created a " + accountType + " account with $" + String.format("%.2f", initialAmount) + "!</h2>");
+        out.println("<h4>Redirecting to Account Summary after 3 seconds...</h4>");
 
 
         out.println("<style>");
         out.println("body {");
         out.println("background: linear-gradient(to right, #66a6ff, #90f2f9);");
+        out.println("}");
+        out.println(".success {");
+        out.println("color: #6cc070;");
         out.println("}");
         out.println("</style>");
     }

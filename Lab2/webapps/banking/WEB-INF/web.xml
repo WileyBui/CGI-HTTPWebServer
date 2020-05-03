@@ -30,8 +30,8 @@
     <servlet-class>CreateSubAccount</servlet-class>
   </servlet>
   <servlet>
-    <servlet-name>CloseAccount</servlet-name>
-    <servlet-class>CloseAccount</servlet-class>
+    <servlet-name>CloseSubAccount</servlet-name>
+    <servlet-class>CloseSubAccount</servlet-class>
   </servlet>
   <servlet>
     <servlet-name>ALLUSERS</servlet-name>
@@ -44,6 +44,14 @@
   <servlet>
     <servlet-name>WithdrawProcessor</servlet-name>
     <servlet-class>WithdrawProcessor</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>Transfer</servlet-name>
+    <servlet-class>Transfer</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>History</servlet-name>
+    <servlet-class>History</servlet-class>
   </servlet>
 
   <servlet-mapping>
@@ -67,8 +75,8 @@
     <url-pattern>/CreateSubAccount</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-    <servlet-name>CloseAccount</servlet-name>
-    <url-pattern>/CloseAccount</url-pattern>
+    <servlet-name>CloseSubAccount</servlet-name>
+    <url-pattern>/CloseSubAccount</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>ALLUSERS</servlet-name>
@@ -81,6 +89,14 @@
   <servlet-mapping>
     <servlet-name>WithdrawProcessor</servlet-name>
     <url-pattern>/WithdrawProcessor</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>Transfer</servlet-name>
+    <url-pattern>/Transfer</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>History</servlet-name>
+    <url-pattern>/History</url-pattern>
   </servlet-mapping>
 
 </web-app>

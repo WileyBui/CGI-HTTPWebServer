@@ -1,21 +1,24 @@
 import java.io.*;
 import java.util.UUID;
 
-public class UserAccount<T> implements Serializable {
+public class UserAccount implements Serializable {
     private static final long serialVersionUID = -299482035708790407L;
     private String usernameID;
     private String accountType;
+    private String accountID;
     private Double balance;
 
     public UserAccount(String userID, String accountType, double balance) {
-        this.usernameID  = UUID.randomUUID().toString();
+        this.usernameID  = userID;
         this.accountType = accountType;
         this.balance     = balance;
+        this.accountID   = UUID.randomUUID().toString();
     }
 
     public UserAccount(String userID, String accountType, String balance) {
-        this.usernameID  = UUID.randomUUID().toString();
+        this.usernameID  = userID;
         this.accountType = accountType;
+        this.accountID   = UUID.randomUUID().toString();
 
         try { 
             this.balance = Double.parseDouble(balance);
@@ -30,6 +33,10 @@ public class UserAccount<T> implements Serializable {
 
     public String getAccountType() {
         return this.accountType;
+    }
+
+    public String getAccountID() {
+        return this.accountID;
     }
 
     public Double getBalance() {

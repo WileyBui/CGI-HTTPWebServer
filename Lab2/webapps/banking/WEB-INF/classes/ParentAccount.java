@@ -36,4 +36,20 @@ public class ParentAccount implements Serializable {
         this.subAccountList.add(newAccount);
     }
 
+    public int removeSubAccountByAccountID(String accountID) {
+        // return -2 = error  : needs to withdraw all money out first
+        // return -1 = error  : could not find account
+        // return  0 = success: removed sub account
+        for (UserAccount account : this.subAccountList) {
+            if (account.getAccountID().equals(accountID)) {
+                if (account.getBalance() > 0) {
+                    return -2;
+                }
+                this.subAccountList.remove(account);
+                return 0;
+            }
+        }
+        return -1;
+    }
+
 }

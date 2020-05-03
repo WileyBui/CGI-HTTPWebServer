@@ -12,30 +12,49 @@ public class Withdraw extends HttpServlet {
         PrintWriter out     = response.getWriter();
         HttpSession session = request.getSession(false);
 
-        String username = (String)session.getAttribute("username");
+        // we must verify BOTH usernameID AND accountID in order to withdraw money
+        boolean accountFound = false;
+        String  usernameID   = (String)session.getAttribute("usernameID");
+        String  accountID    = request.getParameter("accountID");
 
-        Database    database          = new Database();
-        UserAccount currentUserObject = database.getUserObject(username);
-        String      balance = currentUserObject.getBalanceString();
 
         response.setContentType("text/html");
         response.setCharacterEncoding("UTF-8");
-
+        out.println("<!DOCTYPE html><html>");
+        out.println("<head>");
+        out.println("<meta charset='UTF-8' />");
+        out.println("<title>Withdraw Money</title>");
+        out.println("</head>");
         out.println("<style>");
         out.println("body {");
         out.println("background: linear-gradient(to right, #66a6ff, #90f2f9);");
         out.println("}");
         out.println("</style>");
+        
+        ParentAccount parentAccount = new ParentDatabase().getParentObjectByUsernameID(usernameID);
+        for (UserAccount account : parentAccount.getSubAccounts()) {
+            if (account.getAccountID().equals(accountID)) {
+                session.setAttribute("accountID", accountID);
 
-        out.println("<form method=POST action=\"WithdrawProcessor\"");
-        out.println("<table>");
-        out.println("<tr>");
-        out.println("<td><strong>How much would you like to withdraw? Current Balance : " + balance + "</strong></td>");
-        out.println("<td><input type=\"number\" step=\"0.01\" min=\"0\" required name=\"withdraw-amount\" placeholder=\"420.69\" style=\"width:100%\"></td>");
-        out.println("</tr>");
-        out.println("</table>");
-        out.println("<input type=\"submit\" value=\"Submit\"></td>");
-        out.println("</form>");
+                out.println("<form method=POST action='WithdrawProcessor'");
+                out.println("<table>");
+                out.println("<tr>");
+                out.println("<td><strong>How much would you like to withdraw? Current Balance: " + account.getBalanceString() + "</strong></td>");
+                out.println("<td><input type='number' step='0.01' min='0' required name='withdraw-amount' placeholder='420.69' style='width:100%'></td>");
+                out.println("</tr>");
+                out.println("</table>");
+                out.println("<input type='submit' value='Submit'></td>");
+                out.println("</form>");
+                break;
+            }
+        }
+
+        if (!accountFound) {
+            out.println("Account cannot be found...");
+        }
+        out.println("</body>");
+        out.println("</html>");
+
     }
 
     @Override

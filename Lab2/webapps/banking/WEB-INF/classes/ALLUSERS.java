@@ -40,7 +40,7 @@ public class ALLUSERS extends HttpServlet {
             out.println("<td><ul>");
             for (UserAccount subAccount : subAccountsFromParent) {
                 out.println("<li><strong>" + subAccount.getAccountType() + "</strong> ");
-                out.println(subAccount.getBalanceString() + "</li>");
+                out.println(subAccount.getBalanceString() + " " + subAccount.getAccountID() + " </li>");
             }
             out.println("</tr>");
         }

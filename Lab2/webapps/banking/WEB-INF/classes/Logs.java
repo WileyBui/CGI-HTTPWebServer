@@ -7,14 +7,13 @@ public class Logs {
     
     // Appends each user's log contents to its corresponding user log file
     public void appendToLog(String username, String contents) throws IOException {
-        return;
-        // SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss.SSS");
-        // Date currentDate = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss.SSS");
+        Date currentDate = new Date();
 
-        // String textToAppend = formatter.format(currentDate) + ": " + contents + ".\n";
-        // FileOutputStream outputStream = new FileOutputStream("../webapps/banking/logs/" + username + ".log", true);
-        // byte[] strToBytes = textToAppend.getBytes();
-        // outputStream.write(strToBytes);
-        // outputStream.close();
+        String textToAppend = "<strong>" + formatter.format(currentDate) + "</strong>: " + contents + ".\n";
+        FileOutputStream outputStream = new FileOutputStream("../webapps/banking/logs/" + username + ".log", true);
+        byte[] strToBytes = textToAppend.getBytes();
+        outputStream.write(strToBytes);
+        outputStream.close();
     }
 }

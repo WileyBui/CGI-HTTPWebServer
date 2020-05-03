@@ -9,73 +9,72 @@ public class WithdrawProcessor extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        PrintWriter  out     = response.getWriter();
-        HttpSession  session = request.getSession();
-        List<String> errors  = new ArrayList<>();
-
-        String username = (String)session.getAttribute("username");
-        session.setAttribute("username", username);
+      PrintWriter out     = response.getWriter();
+      HttpSession session = request.getSession();
+      
+      Double withdrawAmount = Double.parseDouble(request.getParameter("withdraw-amount"));
+      String usernameID     = (String)session.getAttribute("usernameID");
+      String accountID      = (String)session.getAttribute("accountID");
         
-        Database    database          = new Database();
-        UserAccount currentUserObject = database.getUserObject(username);
+      out.println("<style>");
+      out.println("body {");
+      out.println("background: linear-gradient(to right, #66a6ff, #90f2f9);");
+      out.println("}");
+      out.println("</style>");
 
-        out.println("<style>");
-        out.println("body {");
-        out.println("background: linear-gradient(to right, #66a6ff, #90f2f9);");
-        out.println("}");
-        out.println("</style>");
+      
+      ParentAccount parentAccount     = new ParentDatabase().getParentObjectByUsernameID(usernameID);
+      boolean       isAccountModified = false;
 
-        Double withdrawAmount = Double.parseDouble(request.getParameter("withdraw-amount"));
-        Double currentAmount = currentUserObject.getBalance();
-        Double newAmount = currentAmount-withdrawAmount;
-
-        if(withdrawAmount > currentAmount) {
-          out.println("<h1>Withdraw Failed. You tried to withdraw more than you have</h1>");
-          out.println("<p><a href='AccountBalances'>Return to Account Summary</a></p>");
-        } else {
-          String oldFileName = "../webapps/banking/database.txt";
-          String tmpFileName = "../webapps/banking/tmp_database.txt";
-          
-          //File              databaseFile = new File("../webapps/banking/database.txt");
-          //ObjectInputStream objInput     = new ObjectInputStream(new FileInputStream(databaseFile));
-
-          ObjectInputStream objInput = new ObjectInputStream(new FileInputStream(new File(oldFileName)));
-          ObjectOutputStream objOutput = new ObjectOutputStream(new FileOutputStream(new File(tmpFileName)));
-
-
-          try {
-            Object obj = objInput.readObject();
-
-            while (obj != null) {
-              if(obj instanceof UserAccount) {
-                UserAccount retrievedAccount = (UserAccount) obj;
-                //out.println(retrievedAccount.getUsername());
-                if(username.equals(retrievedAccount.getUsername())) {
-                  retrievedAccount.withdraw(withdrawAmount);
-                }
-                objOutput.writeObject(retrievedAccount);
-                objOutput.flush();
-              }
-              obj = objInput.readObject();
+      if (parentAccount == null) {
+        out.println("<title>Withdraw: Error!</title>");
+        out.println("</head>");
+        out.println("<body><center>");
+        // "Two-Factor Authentication"
+        out.println("<h2 class='error'>Could not find the parent/main account.</h2>");
+      } else {
+        for (UserAccount account : parentAccount.getSubAccounts()) {
+          if (account.getAccountID().equals(accountID)) {
+            isAccountModified = true;
+            if (withdrawAmount > account.getBalance()) {
+              out.println("<h1>Withdraw Failed. You tried to withdraw more than you have</h1>");
+              out.println("<p><a href='AccountBalances'>Return to Account Summary</a></p>");
             }
+            else {
+              account.withdraw(withdrawAmount);
+              try {
+                List<ParentAccount> allParentObjects = new ParentDatabase().getAllParentObjects();
+                ObjectOutputStream  outputStream     = new ObjectOutputStream(new FileOutputStream("../webapps/banking/ParentDatabase.txt"));
 
-          } catch (Exception e) {    
+                // Clears the parent database
+                outputStream.reset();
+
+                for (ParentAccount parentObject : allParentObjects) {
+                    if (parentObject.getUsernameID().equals(usernameID)) {
+                        // Writes the modified parent
+                        outputStream.writeObject(parentAccount);
+                    } else {
+                        // Rewrites existing parent(s)
+                        outputStream.writeObject(parentObject);
+                    }
+                }
+                outputStream.close();
+              } catch(Exception e) {}
+              out.println("<h2>You successfully withdrew $" + String.format("%.2f", withdrawAmount) + ". Your new balance is: " + account.getBalanceString() + "</h2>");
+              out.println("<p><a href='AccountBalances'>Return to Account Summary</a></p>");
+            }
           }
+        }
 
-          objInput.close();
-          objOutput.close();
-
-          //once everything is complete, delete old file
-          File oldFile = new File(oldFileName);
-          oldFile.delete();
-
-          //and rename tmp file's name to old file name
-          File newFile = new File(tmpFileName);
-          newFile.renameTo(oldFile);
-
-          out.println("<h2>You successfully withdrew " + Double.toString(withdrawAmount) + ". Your new balance is: " + Double.toString(newAmount) + "</h2>");
+        if (!isAccountModified) {
+          out.println("Account could not be found...");
           out.println("<p><a href='AccountBalances'>Return to Account Summary</a></p>");
         }
+
+        out.println("</body>");
+        out.println("</html>");
+      }
+
     }
 
     @Override

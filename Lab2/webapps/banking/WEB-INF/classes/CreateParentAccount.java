@@ -59,7 +59,7 @@ public class CreateParentAccount extends HttpServlet {
             // log.appendToLog(username, "SUCCESS: ACCOUNT CREATED with " + newParentAccount.getBalanceString() + " to " + accountType);
     
             out.println("<h2 class='success'>Successfully created " + username + "!</h2>");
-            out.println("<h4>Redirecting to Home page after 3 seconds...</h4>");
+            out.println("<h4>Redirecting to Account Summary after 3 seconds...</h4>");
         }
         out.println("</center>");
         out.println("</body>");
