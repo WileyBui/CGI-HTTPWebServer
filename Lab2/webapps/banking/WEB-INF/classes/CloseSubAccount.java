@@ -23,6 +23,9 @@ public class CloseSubAccount extends HttpServlet {
         out.println("<!DOCTYPE html><html>");
         out.println("<head>");
         out.println("<meta charset=\"UTF-8\" />");
+        out.println("<META HTTP-EQUIV='Cache-Control' CONTENT='no-cache'>");
+		out.println("<META HTTP-EQUIV='Pragma' CONTENT='no-cache'>");
+		out.println("<META HTTP-EQUIV='Expires' CONTENT='0'>");
         
         int isRemoved = parentAccount.removeSubAccountByAccountID(accountID);
             // if isRemoved is -2 => error  : needs to withdraw all money out first

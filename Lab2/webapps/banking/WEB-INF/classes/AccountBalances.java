@@ -27,6 +27,9 @@ public class AccountBalances extends HttpServlet {
         out.println("<!DOCTYPE html><html>");
         out.println("<head>");
         out.println("<meta charset=\"UTF-8\" />");
+        out.println("<META HTTP-EQUIV='Cache-Control' CONTENT='no-cache'>");
+		out.println("<META HTTP-EQUIV='Pragma' CONTENT='no-cache'>");
+		out.println("<META HTTP-EQUIV='Expires' CONTENT='0'>");
         
         ParentDatabase database      = new ParentDatabase();
         boolean        isParentExist = database.isParentExist(username);

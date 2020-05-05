@@ -17,6 +17,9 @@ public class ALLUSERS extends HttpServlet {
         out.println("<!DOCTYPE html><html>");
         out.println("<head>");
         out.println("<meta charset=\"UTF-8\" />");
+        out.println("<META HTTP-EQUIV='Cache-Control' CONTENT='no-cache'>");
+		out.println("<META HTTP-EQUIV='Pragma' CONTENT='no-cache'>");
+		out.println("<META HTTP-EQUIV='Expires' CONTENT='0'>");
         out.println("<title>List of all users</title>");
         out.println("</head>");
         out.println("<body bgcolor=\"#DCDCDC\">");

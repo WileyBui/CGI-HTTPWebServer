@@ -23,13 +23,12 @@ public class Withdraw extends HttpServlet {
         out.println("<!DOCTYPE html><html>");
         out.println("<head>");
         out.println("<meta charset='UTF-8' />");
+        out.println("<META HTTP-EQUIV='Cache-Control' CONTENT='no-cache'>");
+		out.println("<META HTTP-EQUIV='Pragma' CONTENT='no-cache'>");
+		out.println("<META HTTP-EQUIV='Expires' CONTENT='0'>");
         out.println("<title>Withdraw Money</title>");
         out.println("</head>");
-        out.println("<style>");
-        out.println("body {");
-        out.println("background: linear-gradient(to right, #66a6ff, #90f2f9);");
-        out.println("}");
-        out.println("</style>");
+        out.println("<body>");
         
         ParentAccount parentAccount = new ParentDatabase().getParentObjectByUsernameID(usernameID);
         for (UserAccount account : parentAccount.getSubAccounts()) {
@@ -53,6 +52,11 @@ public class Withdraw extends HttpServlet {
             out.println("Account cannot be found...");
         }
         out.println("</body>");
+        out.println("<style>");
+        out.println("body {");
+        out.println("background: linear-gradient(to right, #66a6ff, #90f2f9);");
+        out.println("}");
+        out.println("</style>");
         out.println("</html>");
 
     }
