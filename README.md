@@ -1,11 +1,11 @@
-# INET4021 Lab 1
+# CGI HTTP Web Server
 
 ### Authors
-- Wiley Bui - 5368469 - buixx206@umn.edu
-- Gus Eggers - 5220957 - egger235@umn.edu
+- [Wiley Bui](https://github.com/WileyBui) - 5368469 - buixx206@umn.edu
+- [Gus Eggers](https://github.com/GusEggers) - 5220957 - egger235@umn.edu
 
 ### Project Goals
-The main goal of this lab is to create a HTTP web server based on [RFC/1945](https://tools.ietf.org/html/rfc1945). The server is built on C socket programming and abstraction learned so far in INET 4021 - Network Programming. 
+The main goal of this lab is to create a CGI HTTP web server based on the [RFC/1945](https://tools.ietf.org/html/rfc1945). The server is built on C socket programming and abstraction learned so far in INET 4021 - Network Programming. 
 
 Additionally, the server should be efficient in regards to speed and resource allocation. 
 
@@ -19,9 +19,9 @@ As for our algorithm, the server takes in input, then parses it to find if it's 
 
     When a client sends a POST/GET request to the server, the server will call the CGI executable to handle the request. The main use for this is to allow the executable to handle the work, while the server just passes it off and then can handle new requests. This is a good use of resource allocation and helps support more users concurrently.
 
-- __*/conf -*__ The config folder contains one .conf file which is a configuration file for the server. It states the amount of concurrent users, root content location, index location, and port to be run on.
+- __*/conf -*__ The config folder contains httpd.conf file which is a configuration file for the server. It states the amount of concurrent users, root content location, index location, and port to be run on.
 
-- __*/contents -*__ All of the .html, .gif, .jgp (contents) reside in this folder. When the index.html is received, it sends requests for all these files. These files are used to make the webpage that is displayed on the client's browser. 
+- __*/contents -*__ All of the .html, .gif, .jpg (contents) reside in this folder. When the index.html is received, it sends requests for all these files. These files are used to make the webpage that is displayed on the client's browser. 
 
 - __*/logs -*__ This folder contains the log files for all access commands as well as errors. The standard out will go to the access log and all other error logs go to the error log.
 
@@ -31,13 +31,23 @@ As for our algorithm, the server takes in input, then parses it to find if it's 
 
 ### Set-up & Usability
 - To compile the GET and POST CGI, change to the `/src` directory. Compile the C file. This can be done by 
-    `gcc POST.c -o ../cgi-bin/POST.cgi && gcc GET.c -o ../cgi-bin/GET.cgi`
-- To test the server, go to the `/src` directory. Compile the C file and run it. This can be done by `gcc server.c && ./a.out`
-The server will run on the port specified in the config file. If unchanged, it will be port `8080`. 
+
+        gcc POST.c -o ../cgi-bin/POST.cgi && gcc GET.c -o ../cgi-bin/GET.cgi
+- To test the server, go to the `/src` directory. Compile the C file and run it. This can be done by:
+
+        gcc server.c && ./a.out
+
+The server will run based on the contents specified in the config file. If unchanged, the terminal will return:
+
+        Number of simultaneous connections: 10
+        Root directory (to start looking for HTML files): ../contents/
+        Index filename (if none given): /index.html
+        Port to run on server: 8080
 
 Now, using a web browser, enter "http://localhost:8080/". This will load the `index.html` file and display the webpage.
-Additionally, you can load certain files by doing "http://localhost:8080/FILENAME". If the file exists, it will be displayed. 
-If it doesn't exist, there will be a Error 404 - File Not Found.
+Additionally, you can load certain files by doing "http://localhost:8080/FILENAME". If the file exists, it will be displayed (shown below). Otherwise, there will be a `Error 404 - File Not Found` message. 
+
+![Screnshot showing localhost:8080](contents/images/localhost_screenshot.png?raw=true "localhost:8080")
 
 Before we begin, it is important to note that when the server sends a message to the web browser client, it is preceded by an HTTP header. An example of this is :
 
@@ -85,6 +95,3 @@ Assuming the client is the user and the admin is the server...
 Admin - The purpose of this project for admins is to see how to handle POST and GET requests in an executable webserver. Programming the server also helps understand how to send HTTP headers and communicate with a webpage, as well as browsing for files and sending them to a webpage. 
 
 User - The purpose of this project for users is to learn how to navigate webpages and what certain errors mean when received. For example, if trying to load a file from the server that doesn't exist, there is going to be a 404 File Not Found error.
-
-### Group Effort
-We both put in effort to make this project work. 
